@@ -12,14 +12,14 @@ import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const SimulateWarmUpInputSchema = z.object({
-  sim1Name: z.string().describe('The internal name of the first SIM card.'),
-  sim2Name: z.string().describe('The internal name of the second SIM card.'),
-  numMessages: z.number().describe('The number of messages to exchange between the SIM cards.'),
+  sim1Name: z.string().describe('O nome interno do primeiro cartão SIM.'),
+  sim2Name: z.string().describe('O nome interno do segundo cartão SIM.'),
+  numMessages: z.number().describe('O número de mensagens a serem trocadas entre os cartões SIM.'),
 });
 export type SimulateWarmUpInput = z.infer<typeof SimulateWarmUpInputSchema>;
 
 const SimulateWarmUpOutputSchema = z.object({
-  conversationLog: z.array(z.string()).describe('A log of the simulated conversation.'),
+  conversationLog: z.array(z.string()).describe('Um registro da conversa simulada.'),
 });
 export type SimulateWarmUpOutput = z.infer<typeof SimulateWarmUpOutputSchema>;
 
@@ -31,9 +31,9 @@ const warmUpPrompt = ai.definePrompt({
   name: 'warmUpPrompt',
   input: {schema: SimulateWarmUpInputSchema},
   output: {schema: SimulateWarmUpOutputSchema},
-  prompt: `You are simulating a conversation between two SIM cards, named {{sim1Name}} and {{sim2Name}}, to warm them up for use.  The goal is to simulate natural conversation.
+  prompt: `Você está simulando uma conversa entre dois cartões SIM, chamados {{sim1Name}} e {{sim2Name}}, para aquecê-los para uso. O objetivo é simular uma conversa natural.
 
-Simulate {{numMessages}} messages between the two SIM cards. Alternate turns between the two SIMs.  Each turn, add a line to the conversation log with the speaker's name followed by a colon and then the message.`,
+Simule {{numMessages}} mensagens entre os dois cartões SIM. Alterne os turnos entre os dois SIMs. A cada turno, adicione uma linha ao registro da conversa com o nome do falante seguido por dois pontos e depois a mensagem.`,
 });
 
 const simulateWarmUpFlow = ai.defineFlow(

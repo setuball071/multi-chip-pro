@@ -31,26 +31,32 @@ export default function DashboardPage() {
   const sortedSims = [...mockSimCards].sort(
     (a, b) => b.messageCount - a.messageCount
   );
+  
+  const statusTranslations: {[key: string]: string} = {
+    active: "ativo",
+    "warming up": "aquecendo",
+    blocked: "bloqueado",
+  }
 
   return (
     <div className="grid gap-6">
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total SIMs</CardTitle>
+            <CardTitle className="text-sm font-medium">Total de SIMs</CardTitle>
             <Smartphone className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold font-headline">{totalSims} / 15</div>
             <p className="text-xs text-muted-foreground">
-              Your registered SIM cards
+              Seus cartões SIM registrados
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Total Messages Sent
+              Total de Mensagens Enviadas
             </CardTitle>
             <MessageSquare className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
@@ -59,19 +65,19 @@ export default function DashboardPage() {
               {totalMessages.toLocaleString()}
             </div>
             <p className="text-xs text-muted-foreground">
-              Across all active SIMs
+              Em todos os SIMs ativos
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Warm-up Runs</CardTitle>
+            <CardTitle className="text-sm font-medium">Execuções de Aquecimento</CardTitle>
             <Bot className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold font-headline">{warmUpSessions}</div>
             <p className="text-xs text-muted-foreground">
-              Total simulation sessions executed
+              Total de sessões de simulação executadas
             </p>
           </CardContent>
         </Card>
@@ -79,20 +85,20 @@ export default function DashboardPage() {
       <div>
         <Card>
           <CardHeader>
-            <CardTitle className="font-headline">SIM Activity</CardTitle>
+            <CardTitle className="font-headline">Atividade dos SIMs</CardTitle>
             <CardDescription>
-              Overview of messages sent per SIM card.
+              Visão geral das mensagens enviadas por cartão SIM.
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>SIM Name</TableHead>
-                  <TableHead>Phone Number</TableHead>
+                  <TableHead>Nome do SIM</TableHead>
+                  <TableHead>Número de Telefone</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Messages Sent</TableHead>
-                  <TableHead className="w-[150px]">Activity Level</TableHead>
+                  <TableHead className="text-right">Mensagens Enviadas</TableHead>
+                  <TableHead className="w-[150px]">Nível de Atividade</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -111,7 +117,7 @@ export default function DashboardPage() {
                         }
                         className="capitalize"
                       >
-                        {sim.status}
+                        {statusTranslations[sim.status]}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right font-mono">{sim.messageCount.toLocaleString()}</TableCell>

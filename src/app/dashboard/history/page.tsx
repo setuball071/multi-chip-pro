@@ -7,8 +7,8 @@ export default function HistoryPage() {
   return (
     <div className="space-y-6">
        <div>
-        <h2 className="text-2xl font-headline tracking-tight">Activity History</h2>
-        <p className="text-muted-foreground">A complete log of all warm-ups and broadcasts.</p>
+        <h2 className="text-2xl font-headline tracking-tight">Histórico de Atividades</h2>
+        <p className="text-muted-foreground">Um registro completo de todos os aquecimentos e transmissões.</p>
       </div>
       <HistoryDataTable columns={columns} data={mockHistory} />
     </div>

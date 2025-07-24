@@ -41,11 +41,11 @@ export default function DashboardLayout({
   const router = useRouter();
 
   const menuItems = [
-    { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+    { href: "/dashboard", label: "Painel", icon: LayoutDashboard },
     { href: "/dashboard/sims", label: "SIMs", icon: Smartphone },
-    { href: "/dashboard/warm-up", label: "Warm-up", icon: Bot },
-    { href: "/dashboard/broadcasts", label: "Broadcasts", icon: Send },
-    { href: "/dashboard/history", label: "History", icon: History },
+    { href: "/dashboard/warm-up", label: "Aquecimento", icon: Bot },
+    { href: "/dashboard/broadcasts", label: "Transmissões", icon: Send },
+    { href: "/dashboard/history", label: "Histórico", icon: History },
   ];
 
   return (
@@ -79,21 +79,21 @@ export default function DashboardLayout({
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="justify-start gap-2 w-full p-2 h-auto group-data-[collapsible=icon]:w-auto group-data-[collapsible=icon]:justify-center">
                  <Avatar className="h-8 w-8">
-                  <AvatarImage src="https://placehold.co/100x100" alt="Sales Agent" />
-                  <AvatarFallback>SA</AvatarFallback>
+                  <AvatarImage src="https://placehold.co/100x100" alt="Agente de Vendas" />
+                  <AvatarFallback>AV</AvatarFallback>
                 </Avatar>
                 <div className="text-left group-data-[collapsible=icon]:hidden">
-                    <p className="font-medium text-sm">Sales Agent</p>
-                    <p className="text-xs text-muted-foreground">agent@example.com</p>
+                    <p className="font-medium text-sm">Agente de Vendas</p>
+                    <p className="text-xs text-muted-foreground">agente@exemplo.com</p>
                 </div>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent side="right" align="end" className="w-56">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
+              <DropdownMenuLabel>Minha Conta</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => router.push("/")}>
                 <LogOut className="mr-2 h-4 w-4" />
-                <span>Log out</span>
+                <span>Sair</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -103,7 +103,7 @@ export default function DashboardLayout({
         <header className="flex h-14 items-center gap-4 border-b bg-card px-4 lg:h-[60px] lg:px-6 sticky top-0 z-30">
             <SidebarTrigger className="md:hidden" />
             <h1 className="text-lg font-semibold md:text-2xl font-headline">
-              {menuItems.find(item => item.href === pathname)?.label || 'Dashboard'}
+              {menuItems.find(item => item.href === pathname)?.label || 'Painel'}
             </h1>
         </header>
         <main className="flex-1 p-4 md:p-6 lg:p-8">

@@ -11,7 +11,7 @@ const spaceGrotesk = Space_Grotesk({
 
 export const metadata: Metadata = {
   title: "Multi-Chip Pro",
-  description: "Manage and automate your SIM cards with ease.",
+  description: "Gerencie e automatize seus cartões SIM com facilidade.",
 };
 
 export default function RootLayout({
@@ -20,7 +20,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="pt-BR" suppressHydrationWarning>
       <body
         className={`${inter.variable} ${spaceGrotesk.variable} font-body antialiased`}
       >

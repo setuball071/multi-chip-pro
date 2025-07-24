@@ -58,7 +58,7 @@ export function HistoryDataTable<TData, TValue>({
     <div className="rounded-md border bg-card">
       <div className="p-4 flex items-center justify-between gap-4">
         <Input
-          placeholder="Filter by details or tag..."
+          placeholder="Filtrar por detalhes ou tag..."
           value={(table.getColumn("details")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
             table.getColumn("details")?.setFilterValue(event.target.value)
@@ -67,7 +67,7 @@ export function HistoryDataTable<TData, TValue>({
         />
         <Button variant="outline">
             <Download className="mr-2 h-4 w-4"/>
-            Export
+            Exportar
         </Button>
       </div>
       <Table>
@@ -106,7 +106,7 @@ export function HistoryDataTable<TData, TValue>({
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length} className="h-24 text-center">
-                No history found.
+                Nenhum histórico encontrado.
               </TableCell>
             </TableRow>
           )}
@@ -119,7 +119,7 @@ export function HistoryDataTable<TData, TValue>({
           onClick={() => table.previousPage()}
           disabled={!table.getCanPreviousPage()}
         >
-          Previous
+          Anterior
         </Button>
         <Button
           variant="outline"
@@ -127,7 +127,7 @@ export function HistoryDataTable<TData, TValue>({
           onClick={() => table.nextPage()}
           disabled={!table.getCanNextPage()}
         >
-          Next
+          Próxima
         </Button>
       </div>
     </div>

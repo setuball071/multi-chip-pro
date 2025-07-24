@@ -65,7 +65,7 @@ export function SimCardDataTable<TData, TValue>({
     <div className="rounded-md border bg-card">
       <div className="p-4 flex items-center justify-between">
         <Input
-          placeholder="Filter by name..."
+          placeholder="Filtrar por nome..."
           value={(table.getColumn("internalName")?.getFilterValue() as string) ?? ""}
           onChange={(event) =>
             table.getColumn("internalName")?.setFilterValue(event.target.value)
@@ -75,7 +75,7 @@ export function SimCardDataTable<TData, TValue>({
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
-              Columns <ChevronDown className="ml-2 h-4 w-4" />
+              Colunas <ChevronDown className="ml-2 h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
@@ -92,7 +92,12 @@ export function SimCardDataTable<TData, TValue>({
                       column.toggleVisibility(!!value)
                     }
                   >
-                    {column.id}
+                    {column.id === 'internalName' ? 'Nome Interno' :
+                     column.id === 'phoneNumber' ? 'Número de Telefone' :
+                     column.id === 'status' ? 'Status' :
+                     column.id === 'messageCount' ? 'Mensagens' :
+                     column.id === 'createdAt' ? 'Data de Adição' :
+                     column.id}
                   </DropdownMenuCheckboxItem>
                 )
               })}
@@ -135,7 +140,7 @@ export function SimCardDataTable<TData, TValue>({
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length} className="h-24 text-center">
-                No results.
+                Nenhum resultado.
               </TableCell>
             </TableRow>
           )}
@@ -143,8 +148,8 @@ export function SimCardDataTable<TData, TValue>({
       </Table>
        <div className="flex items-center justify-end space-x-2 py-4 px-4">
          <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
+          {table.getFilteredSelectedRowModel().rows.length} de{" "}
+          {table.getFilteredRowModel().rows.length} linha(s) selecionada(s).
         </div>
         <Button
           variant="outline"
@@ -152,7 +157,7 @@ export function SimCardDataTable<TData, TValue>({
           onClick={() => table.previousPage()}
           disabled={!table.getCanPreviousPage()}
         >
-          Previous
+          Anterior
         </Button>
         <Button
           variant="outline"
@@ -160,7 +165,7 @@ export function SimCardDataTable<TData, TValue>({
           onClick={() => table.nextPage()}
           disabled={!table.getCanNextPage()}
         >
-          Next
+          Próxima
         </Button>
       </div>
     </div>

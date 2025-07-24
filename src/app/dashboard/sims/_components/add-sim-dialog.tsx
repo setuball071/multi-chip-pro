@@ -20,13 +20,13 @@ export function AddSimDialog() {
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        // In a real app, you would handle form submission here
+        // Em um aplicativo real, você lidaria com o envio do formulário aqui
         toast({
-            title: "SIM Registered",
-            description: "The new SIM card has been added to your inventory.",
+            title: "SIM Registrado",
+            description: "O novo cartão SIM foi adicionado ao seu inventário.",
         });
-        // Here you would typically close the dialog, which needs state management.
-        // For this example, we just show a toast.
+        // Aqui você normalmente fecharia o diálogo, o que precisa de gerenciamento de estado.
+        // Para este exemplo, apenas mostramos um brinde.
     };
 
   return (
@@ -34,33 +34,33 @@ export function AddSimDialog() {
       <DialogTrigger asChild>
         <Button>
             <PlusCircle className="mr-2 h-4 w-4" />
-            Add SIM
+            Adicionar SIM
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <form onSubmit={handleSubmit}>
             <DialogHeader>
-            <DialogTitle className="font-headline">Register New SIM</DialogTitle>
+            <DialogTitle className="font-headline">Registrar Novo SIM</DialogTitle>
             <DialogDescription>
-                Add a new SIM card to your inventory. Click save when you're done.
+                Adicione um novo cartão SIM ao seu inventário. Clique em salvar quando terminar.
             </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="name" className="text-right">
-                Internal Name
+                Nome Interno
                 </Label>
-                <Input id="name" defaultValue="Campaign Charlie" className="col-span-3" />
+                <Input id="name" defaultValue="Campanha Charlie" className="col-span-3" />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="phone" className="text-right">
-                Phone Number
+                Número de Telefone
                 </Label>
-                <Input id="phone" defaultValue="+1 (555) 890-1234" className="col-span-3" />
+                <Input id="phone" defaultValue="+55 (11) 98765-4321" className="col-span-3" />
             </div>
             </div>
             <DialogFooter>
-            <Button type="submit">Save SIM</Button>
+            <Button type="submit">Salvar SIM</Button>
             </DialogFooter>
         </form>
       </DialogContent>

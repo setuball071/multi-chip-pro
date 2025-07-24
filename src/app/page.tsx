@@ -18,8 +18,8 @@ export default function LoginPage() {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real app, you'd have authentication logic here.
-    // For this scaffold, we'll just navigate to the dashboard.
+    // Em um aplicativo real, você teria lógica de autenticação aqui.
+    // Para este esqueleto, apenas navegaremos para o painel.
     router.push("/dashboard");
   };
 
@@ -30,29 +30,29 @@ export default function LoginPage() {
           <div className="flex justify-center mb-4">
             <Logo />
           </div>
-          <CardTitle className="text-2xl font-headline">Welcome Back</CardTitle>
+          <CardTitle className="text-2xl font-headline">Bem-vindo de Volta</CardTitle>
           <CardDescription>
-            Enter your credentials to access your dashboard
+            Insira suas credenciais para acessar seu painel
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">E-mail</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="agent@example.com"
+                placeholder="agente@exemplo.com"
                 required
-                defaultValue="agent@example.com"
+                defaultValue="agente@exemplo.com"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">Senha</Label>
               <Input id="password" type="password" required defaultValue="password" />
             </div>
             <Button type="submit" className="w-full font-bold">
-              Sign In
+              Entrar
             </Button>
           </form>
         </CardContent>

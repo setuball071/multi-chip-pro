@@ -10,25 +10,26 @@ import { HistoryEntry } from "@/lib/types"
 export const columns: ColumnDef<HistoryEntry>[] = [
   {
     accessorKey: "type",
-    header: "Type",
+    header: "Tipo",
     cell: ({ row }) => {
       const type = row.getValue("type") as string;
+      const translatedType = type === 'broadcast' ? 'Transmissão' : 'Aquecimento';
       const Icon = type === 'broadcast' ? Send : Bot;
       return (
         <Badge variant="outline" className="capitalize">
             <Icon className="mr-2 h-3 w-3" />
-            {type}
+            {translatedType}
         </Badge>
       );
     },
   },
   {
     accessorKey: "simName",
-    header: "SIM Name",
+    header: "Nome do SIM",
   },
   {
     accessorKey: "details",
-    header: "Details",
+    header: "Detalhes",
     cell: ({ row }) => {
       return <div className="max-w-xs truncate">{row.getValue("details")}</div>
     }
@@ -41,7 +42,7 @@ export const columns: ColumnDef<HistoryEntry>[] = [
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Date
+          Data
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )

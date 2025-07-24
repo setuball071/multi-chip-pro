@@ -37,16 +37,16 @@ export default function WarmUpPage() {
     if (!sim1 || !sim2) {
       toast({
         variant: "destructive",
-        title: "Error",
-        description: "Please select two SIM cards to start the simulation.",
+        title: "Erro",
+        description: "Por favor, selecione dois cartões SIM para iniciar a simulação.",
       });
       return;
     }
     if (sim1 === sim2) {
         toast({
             variant: "destructive",
-            title: "Error",
-            description: "Please select two different SIM cards.",
+            title: "Erro",
+            description: "Por favor, selecione dois cartões SIM diferentes.",
         });
         return;
     }
@@ -64,15 +64,15 @@ export default function WarmUpPage() {
         });
         setConversationLog(result.conversationLog);
         toast({
-          title: "Simulation Complete",
-          description: `Generated a conversation between ${sim1Name} and ${sim2Name}.`,
+          title: "Simulação Concluída",
+          description: `Gerada uma conversa entre ${sim1Name} e ${sim2Name}.`,
         });
       } catch (error) {
-        console.error("Simulation failed:", error);
+        console.error("Falha na simulação:", error);
         toast({
           variant: "destructive",
-          title: "Simulation Failed",
-          description: "Could not generate the conversation. Please try again.",
+          title: "Falha na Simulação",
+          description: "Não foi possível gerar a conversa. Por favor, tente novamente.",
         });
       }
     });
@@ -82,22 +82,22 @@ export default function WarmUpPage() {
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div className="lg:col-span-1 space-y-6">
          <div>
-            <h2 className="text-2xl font-headline tracking-tight">AI Warm-up</h2>
-            <p className="text-muted-foreground">Simulate conversations to prepare your SIMs.</p>
+            <h2 className="text-2xl font-headline tracking-tight">Aquecimento com IA</h2>
+            <p className="text-muted-foreground">Simule conversas para preparar seus SIMs.</p>
         </div>
         <Card>
           <CardHeader>
-            <CardTitle className="font-headline">Simulation Setup</CardTitle>
+            <CardTitle className="font-headline">Configuração da Simulação</CardTitle>
             <CardDescription>
-              Select two SIMs and the number of messages to exchange.
+              Selecione dois SIMs e o número de mensagens a serem trocadas.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="sim1">First SIM</Label>
+              <Label htmlFor="sim1">Primeiro SIM</Label>
               <Select value={sim1} onValueChange={setSim1}>
                 <SelectTrigger id="sim1">
-                  <SelectValue placeholder="Select a SIM" />
+                  <SelectValue placeholder="Selecione um SIM" />
                 </SelectTrigger>
                 <SelectContent>
                   {mockSimCards.map((sim) => (
@@ -109,10 +109,10 @@ export default function WarmUpPage() {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="sim2">Second SIM</Label>
+              <Label htmlFor="sim2">Segundo SIM</Label>
               <Select value={sim2} onValueChange={setSim2}>
                 <SelectTrigger id="sim2">
-                  <SelectValue placeholder="Select a SIM" />
+                  <SelectValue placeholder="Selecione um SIM" />
                 </SelectTrigger>
                 <SelectContent>
                   {mockSimCards.map((sim) => (
@@ -124,7 +124,7 @@ export default function WarmUpPage() {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="numMessages">Number of Messages</Label>
+              <Label htmlFor="numMessages">Número de Mensagens</Label>
               <Input
                 id="numMessages"
                 type="number"
@@ -142,7 +142,7 @@ export default function WarmUpPage() {
               ) : (
                 <Bot className="mr-2 h-4 w-4" />
               )}
-              Start Simulation
+              Iniciar Simulação
             </Button>
           </CardFooter>
         </Card>
@@ -151,9 +151,9 @@ export default function WarmUpPage() {
       <div className="lg:col-span-2">
         <Card className="h-full">
           <CardHeader>
-            <CardTitle className="font-headline">Conversation Log</CardTitle>
+            <CardTitle className="font-headline">Registro da Conversa</CardTitle>
             <CardDescription>
-              The generated conversation will appear here.
+              A conversa gerada aparecerá aqui.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -161,16 +161,16 @@ export default function WarmUpPage() {
               {isPending && (
                 <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
                     <Loader2 className="h-8 w-8 animate-spin mb-4" />
-                    <p className="font-medium">Generating conversation...</p>
-                    <p className="text-sm">This may take a moment.</p>
+                    <p className="font-medium">Gerando conversa...</p>
+                    <p className="text-sm">Isso pode levar um momento.</p>
                 </div>
               )}
               {!isPending && conversationLog.length === 0 && (
                 <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
                   <MessageSquare className="h-10 w-10 mb-4" />
-                  <p className="font-semibold text-lg">Ready to Simulate</p>
+                  <p className="font-semibold text-lg">Pronto para Simular</p>
                   <p className="text-sm text-center">
-                    Set up your simulation on the left and click "Start" to begin.
+                    Configure sua simulação à esquerda e clique em "Iniciar" para começar.
                   </p>
                 </div>
               )}

@@ -16,6 +16,13 @@ import { Badge } from "@/components/ui/badge"
 import { SimCard } from "@/lib/types"
 import { Checkbox } from "@/components/ui/checkbox"
 
+
+const statusTranslations: {[key: string]: string} = {
+  active: "ativo",
+  "warming up": "aquecendo",
+  blocked: "bloqueado",
+}
+
 export const columns: ColumnDef<SimCard>[] = [
   {
     id: "select",
@@ -26,14 +33,14 @@ export const columns: ColumnDef<SimCard>[] = [
           (table.getIsSomePageRowsSelected() && "indeterminate")
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
+        aria-label="Selecionar tudo"
       />
     ),
     cell: ({ row }) => (
       <Checkbox
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
+        aria-label="Selecionar linha"
       />
     ),
     enableSorting: false,
@@ -47,7 +54,7 @@ export const columns: ColumnDef<SimCard>[] = [
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Internal Name
+          Nome Interno
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )
@@ -55,7 +62,7 @@ export const columns: ColumnDef<SimCard>[] = [
   },
   {
     accessorKey: "phoneNumber",
-    header: "Phone Number",
+    header: "Número de Telefone",
   },
   {
     accessorKey: "status",
@@ -69,7 +76,7 @@ export const columns: ColumnDef<SimCard>[] = [
           }
           className="capitalize"
         >
-          {status}
+          {statusTranslations[status]}
         </Badge>
       );
     },
@@ -83,7 +90,7 @@ export const columns: ColumnDef<SimCard>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           className="text-right w-full justify-end"
         >
-          Messages
+          Mensagens
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )
@@ -95,7 +102,7 @@ export const columns: ColumnDef<SimCard>[] = [
   },
   {
     accessorKey: "createdAt",
-    header: "Date Added",
+    header: "Data de Adição",
     cell: ({ row }) => {
       const date = new Date(row.getValue("createdAt"));
       return <span>{date.toLocaleDateString()}</span>;
@@ -111,21 +118,21 @@ export const columns: ColumnDef<SimCard>[] = [
             <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
+                <span className="sr-only">Abrir menu</span>
                 <MoreHorizontal className="h-4 w-4" />
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                <DropdownMenuLabel>Ações</DropdownMenuLabel>
                 <DropdownMenuItem
                 onClick={() => navigator.clipboard.writeText(sim.phoneNumber)}
                 >
-                Copy Phone Number
+                Copiar Número de Telefone
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>View History</DropdownMenuItem>
-                <DropdownMenuItem>Edit SIM</DropdownMenuItem>
-                 <DropdownMenuItem className="text-destructive focus:text-destructive focus:bg-destructive/10">Delete SIM</DropdownMenuItem>
+                <DropdownMenuItem>Ver Histórico</DropdownMenuItem>
+                <DropdownMenuItem>Editar SIM</DropdownMenuItem>
+                 <DropdownMenuItem className="text-destructive focus:text-destructive focus:bg-destructive/10">Excluir SIM</DropdownMenuItem>
             </DropdownMenuContent>
             </DropdownMenu>
         </div>

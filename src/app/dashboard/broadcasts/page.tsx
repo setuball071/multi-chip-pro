@@ -11,7 +11,7 @@ import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
 
 export default function BroadcastsPage() {
-  const [variations, setVariations] = React.useState(['Hi!', 'Hello', 'Hey there']);
+  const [variations, setVariations] = React.useState(['Oi!', 'Olá', 'E aí']);
   const [newVariation, setNewVariation] = React.useState('');
 
   const addVariation = () => {
@@ -29,26 +29,26 @@ export default function BroadcastsPage() {
   return (
     <div className="space-y-6">
        <div>
-        <h2 className="text-2xl font-headline tracking-tight">New Broadcast</h2>
-        <p className="text-muted-foreground">Schedule a new mass message campaign.</p>
+        <h2 className="text-2xl font-headline tracking-tight">Nova Transmissão</h2>
+        <p className="text-muted-foreground">Agende uma nova campanha de mensagens em massa.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <Card className="lg:col-span-2">
           <CardHeader>
-            <CardTitle className="font-headline">Message Content</CardTitle>
-            <CardDescription>Define the message and its variations to avoid spam filters.</CardDescription>
+            <CardTitle className="font-headline">Conteúdo da Mensagem</CardTitle>
+            <CardDescription>Defina a mensagem e suas variações para evitar filtros de spam.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
              <div>
-                <Label htmlFor="base-message">Base Message (Optional)</Label>
-                <Textarea id="base-message" placeholder="e.g., Hope you're having a great day!" className="mt-1" />
-                <p className="text-xs text-muted-foreground mt-1">This text can be included in all variations.</p>
+                <Label htmlFor="base-message">Mensagem Base (Opcional)</Label>
+                <Textarea id="base-message" placeholder="ex: Espero que você esteja tendo um ótimo dia!" className="mt-1" />
+                <p className="text-xs text-muted-foreground mt-1">Este texto pode ser incluído em todas as variações.</p>
             </div>
             <Separator />
             <div>
-              <Label>Text Variations</Label>
-              <p className="text-xs text-muted-foreground mb-2">One of these will be randomly chosen for each message.</p>
+              <Label>Variações de Texto</Label>
+              <p className="text-xs text-muted-foreground mb-2">Uma destas será escolhida aleatoriamente para cada mensagem.</p>
               <div className="space-y-2">
                 {variations.map((v, i) => (
                   <div key={i} className="flex items-center gap-2">
@@ -61,12 +61,12 @@ export default function BroadcastsPage() {
               </div>
               <div className="flex items-center gap-2 mt-2">
                 <Input 
-                  placeholder="Add a new variation"
+                  placeholder="Adicionar uma nova variação"
                   value={newVariation}
                   onChange={(e) => setNewVariation(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && addVariation()}
                  />
-                <Button onClick={addVariation}><PlusCircle className="h-4 w-4 mr-2" /> Add</Button>
+                <Button onClick={addVariation}><PlusCircle className="h-4 w-4 mr-2" /> Adicionar</Button>
               </div>
             </div>
           </CardContent>
@@ -74,32 +74,32 @@ export default function BroadcastsPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle className="font-headline">Scheduling &amp; Delivery</CardTitle>
-            <CardDescription>Configure how and when your message will be sent.</CardDescription>
+            <CardTitle className="font-headline">Agendamento e Entrega</CardTitle>
+            <CardDescription>Configure como e quando sua mensagem será enviada.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between rounded-lg border p-3 shadow-sm">
                 <div className="space-y-0.5">
-                    <Label>Use All SIMs</Label>
-                    <p className="text-xs text-muted-foreground">Broadcast from all active SIMs.</p>
+                    <Label>Usar Todos os SIMs</Label>
+                    <p className="text-xs text-muted-foreground">Transmitir de todos os SIMs ativos.</p>
                 </div>
                 <Switch defaultChecked />
             </div>
              <div className="space-y-2">
-              <Label htmlFor="delay">Programmable Delay (seconds)</Label>
+              <Label htmlFor="delay">Atraso Programável (segundos)</Label>
               <Input id="delay" type="number" defaultValue="5" />
-              <p className="text-xs text-muted-foreground">Delay between messages from different SIMs.</p>
+              <p className="text-xs text-muted-foreground">Atraso entre mensagens de diferentes SIMs.</p>
             </div>
              <div className="space-y-2">
-              <Label htmlFor="schedule">Schedule Time (Optional)</Label>
+              <Label htmlFor="schedule">Horário Agendado (Opcional)</Label>
               <Input id="schedule" type="datetime-local" />
-               <p className="text-xs text-muted-foreground">Leave blank to send immediately.</p>
+               <p className="text-xs text-muted-foreground">Deixe em branco para enviar imediatamente.</p>
             </div>
           </CardContent>
            <CardFooter>
             <Button className="w-full">
               <Send className="mr-2 h-4 w-4" />
-              Launch Broadcast
+              Lançar Transmissão
             </Button>
           </CardFooter>
         </Card>
