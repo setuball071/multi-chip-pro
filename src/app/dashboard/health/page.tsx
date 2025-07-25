@@ -11,20 +11,23 @@ import { cn } from '@/lib/utils';
 import { ArrowDown, ArrowUp, Send, CheckCircle, AlertTriangle, XCircle, PauseCircle, TrendingUp, TrendingDown, Minus } from 'lucide-react';
 
 const getStatusInfo = (status: 'active' | 'warming' | 'risky' | 'cooldown' | 'banned') => {
-  switch (status) {
-    case 'active':
-      return { text: 'Ativo', icon: CheckCircle, color: 'text-green-500' };
-    case 'warming':
-      return { text: 'Aquecendo', icon: TrendingUp, color: 'text-blue-500' };
-    case 'risky':
-      return { text: 'Em Risco', icon: AlertTriangle, color: 'text-yellow-500' };
-    case 'cooldown':
-      return { text: 'Em Pausa', icon: PauseCircle, color: 'text-orange-500' };
-    case 'banned':
-        return { text: 'Banido', icon: XCircle, color: 'text-red-700' };
-    default:
-      return { text: 'Desconhecido', icon: AlertTriangle, color: 'text-gray-500' };
-  }
+  const translations: Record<typeof status, string> = {
+    active: 'Ativo',
+    warming: 'Aquecendo',
+    risky: 'Em Risco',
+    cooldown: 'Em Pausa',
+    banned: 'Banido',
+  };
+
+  const statusInfoMap = {
+    active: { icon: CheckCircle, color: 'text-green-500' },
+    warming: { icon: TrendingUp, color: 'text-blue-500' },
+    risky: { icon: AlertTriangle, color: 'text-yellow-500' },
+    cooldown: { icon: PauseCircle, color: 'text-orange-500' },
+    banned: { icon: XCircle, color: 'text-red-700' },
+  };
+
+  return { text: translations[status], ...statusInfoMap[status] };
 };
 
 const getScoreColor = (score: number) => {

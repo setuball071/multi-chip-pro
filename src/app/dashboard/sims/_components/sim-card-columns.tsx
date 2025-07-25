@@ -18,9 +18,9 @@ import { Checkbox } from "@/components/ui/checkbox"
 
 
 const statusTranslations: {[key: string]: string} = {
-  active: "ativo",
-  "warming up": "aquecendo",
-  blocked: "bloqueado",
+  active: "Ativo",
+  "warming up": "Aquecendo",
+  blocked: "Bloqueado",
 }
 
 export const columns: ColumnDef<SimCard>[] = [

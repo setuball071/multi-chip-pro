@@ -33,9 +33,9 @@ export default function DashboardPage() {
   );
   
   const statusTranslations: {[key: string]: string} = {
-    active: "ativo",
-    "warming up": "aquecendo",
-    blocked: "bloqueado",
+    active: "Ativo",
+    "warming up": "Aquecendo",
+    blocked: "Bloqueado",
   }
 
   return (
