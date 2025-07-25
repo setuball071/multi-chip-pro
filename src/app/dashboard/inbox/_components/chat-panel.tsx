@@ -21,7 +21,7 @@ import {
   SheetTitle,
   SheetDescription
 } from "@/components/ui/sheet";
-import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
@@ -51,6 +51,7 @@ export default function ChatPanel({ conversation: initialConversation }: ChatPan
   const [isContextPanelOpen, setIsContextPanelOpen] = useState(false);
   const [newTag, setNewTag] = useState('');
   const [isClient, setIsClient] = useState(false);
+  const [messageText, setMessageText] = useState('');
   const { toast } = useToast();
 
   useEffect(() => {
@@ -100,6 +101,24 @@ export default function ChatPanel({ conversation: initialConversation }: ChatPan
           });
       }
   }
+
+  const handleSendMessage = () => {
+    if (messageText.trim() === '') return;
+    
+    console.log("Enviando:", messageText);
+    toast({
+      title: "Mensagem Enviada",
+      description: messageText,
+    });
+    setMessageText('');
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      handleSendMessage();
+    }
+  };
 
   if (!conversation) {
     return (
@@ -241,11 +260,18 @@ export default function ChatPanel({ conversation: initialConversation }: ChatPan
       </main>
 
       <footer className="p-4 border-t bg-background shrink-0">
-          <div className="relative flex items-center w-full">
-              <Input placeholder="Digite uma mensagem..." className="pr-20" />
-              <div className="absolute right-1 flex items-center">
+          <div className="relative flex items-end w-full gap-2">
+              <Textarea 
+                placeholder="Digite uma mensagem..." 
+                className="pr-20 min-h-0" 
+                rows={1}
+                value={messageText}
+                onChange={(e) => setMessageText(e.target.value)}
+                onKeyDown={handleKeyDown}
+              />
+              <div className="flex items-center">
                   <Button variant="ghost" size="icon"><Paperclip className="h-5 w-5 text-muted-foreground"/></Button>
-                  <Button size="sm"><Send className="h-4 w-4 mr-2" /> Enviar</Button>
+                  <Button size="sm" onClick={handleSendMessage} disabled={!messageText.trim()}><Send className="h-4 w-4 mr-2" /> Enviar</Button>
               </div>
           </div>
       </footer>
@@ -286,10 +312,10 @@ export default function ChatPanel({ conversation: initialConversation }: ChatPan
 
                 <Card>
                     <CardHeader>
-                      <h4 className="font-medium text-base flex items-center gap-2">
+                      <CardTitle className="font-medium text-base flex items-center gap-2">
                         <HeartPulse className="h-5 w-5"/>
                         Saúde do Agente
-                      </h4>
+                      </CardTitle>
                     </CardHeader>
                     <CardContent>
                          <div className="space-y-2">
