@@ -37,7 +37,7 @@ export function NewConversationDialog() {
         await new Promise(resolve => setTimeout(resolve, 1500));
 
         // Para fins de teste, podemos simular uma falha ocasional.
-        // if (Math.random() > 0.5) {
+        // if (Math.random() > 0.8) {
         //   throw new Error("Falha simulada no backend");
         // }
 
@@ -54,7 +54,7 @@ export function NewConversationDialog() {
             await startNewConversation(data);
             
             // Sucesso! Não fazemos nada na UI. O listener onSnapshot cuidará disso.
-            // Apenas fechamos o modal.
+            // Apenas fechamos o modal e informamos o usuário.
             toast({
                 title: "Solicitação Enviada",
                 description: "A nova conversa aparecerá na lista em breve.",
