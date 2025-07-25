@@ -17,10 +17,11 @@ export default function InboxPage() {
 
   useEffect(() => {
     // Apenas busca as conversas se o usuário estiver autenticado.
-    // Substitua 'user.uid' pela lógica correta para obter o 'workspaceId' ou 'agentId'
-    if (!user) return; 
-
-    setLoading(true);
+    if (!user) {
+        // Se ainda não tivermos um usuário, podemos continuar mostrando o estado de carregamento
+        // ou um estado de login necessário, mas por enquanto, vamos manter o carregamento.
+        return;
+    }
 
     const q = query(collection(db, "conversations")); 
     
@@ -33,11 +34,16 @@ export default function InboxPage() {
       });
       setConversations(convs);
       
-      // Seleciona a primeira conversa por padrão se nenhuma estiver selecionada
-      if (!selectedConversation && convs.length > 0) {
-        setSelectedConversation(convs[0]);
+      // Se não houver conversa selecionada e houver conversas carregadas, selecione a primeira.
+      // Se a conversa selecionada anteriormente foi removida, desmarque-a.
+      if (!selectedConversation || !convs.find(c => c.id === selectedConversation.id)) {
+        setSelectedConversation(convs.length > 0 ? convs[0] : null);
       }
-      setLoading(false);
+      
+      setLoading(false); // A mágica está aqui: para o carregamento após o primeiro fetch.
+    }, (error) => {
+        console.error("Erro ao buscar conversas: ", error);
+        setLoading(false); // Para o carregamento em caso de erro também.
     });
 
     return () => unsubscribe();
