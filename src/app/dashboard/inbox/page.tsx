@@ -8,6 +8,7 @@ import ChatPanel from './_components/chat-panel';
 import { useAuth } from "reactfire";
 import { db } from '@/lib/firebase';
 import { collection, onSnapshot, query, where } from 'firebase/firestore';
+import { mockConversations } from '@/lib/data';
 
 export default function InboxPage() {
   const [conversations, setConversations] = useState<Conversation[]>([]);
@@ -16,10 +17,7 @@ export default function InboxPage() {
   const { data: user } = useAuth();
 
   useEffect(() => {
-    // Apenas busca as conversas se o usuário estiver autenticado.
     if (!user) {
-        // Se ainda não tivermos um usuário, podemos continuar mostrando o estado de carregamento
-        // ou um estado de login necessário, mas por enquanto, vamos manter o carregamento.
         return;
     }
 
@@ -28,22 +26,27 @@ export default function InboxPage() {
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const convs: Conversation[] = [];
       querySnapshot.forEach((doc) => {
-        // CUIDADO: Isso precisa de um mapeamento cuidadoso do seu documento do Firestore para o tipo 'Conversation'
-        // Este é um exemplo simplificado.
         convs.push({ id: doc.id, ...doc.data() } as Conversation);
       });
-      setConversations(convs);
-      
-      // Se não houver conversa selecionada e houver conversas carregadas, selecione a primeira.
-      // Se a conversa selecionada anteriormente foi removida, desmarque-a.
-      if (!selectedConversation || !convs.find(c => c.id === selectedConversation.id)) {
-        setSelectedConversation(convs.length > 0 ? convs[0] : null);
+
+      if (convs.length > 0) {
+        setConversations(convs);
+        if (!selectedConversation || !convs.find(c => c.id === selectedConversation.id)) {
+          setSelectedConversation(convs[0]);
+        }
+      } else {
+        // Se não houver conversas no Firestore, use os dados de exemplo.
+        setConversations(mockConversations);
+        setSelectedConversation(mockConversations[0]);
       }
       
-      setLoading(false); // A mágica está aqui: para o carregamento após o primeiro fetch.
+      setLoading(false);
     }, (error) => {
         console.error("Erro ao buscar conversas: ", error);
-        setLoading(false); // Para o carregamento em caso de erro também.
+        // Em caso de erro, também podemos usar os dados de exemplo como fallback.
+        setConversations(mockConversations);
+        setSelectedConversation(mockConversations[0]);
+        setLoading(false); 
     });
 
     return () => unsubscribe();
