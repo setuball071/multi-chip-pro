@@ -41,6 +41,8 @@ export type Contact = {
   tags: string[];
   internalNote?: string;
   customFields?: Record<string, string>;
+  isBlocked?: boolean;
+  assignedTo?: string; // agentId
 };
 
 export type Message = {

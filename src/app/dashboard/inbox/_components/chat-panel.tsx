@@ -10,7 +10,7 @@ import { Conversation, Message } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { Send, Paperclip, Phone, MoreVertical, Tags, Pencil, Info, X, PanelRightClose, PanelRightOpen, MessageSquare, Star, HeartPulse, Download, Mail, PlusCircle } from 'lucide-react';
+import { Send, Paperclip, Phone, MoreVertical, Tags, Pencil, Info, X, PanelRightClose, PanelRightOpen, MessageSquare, Star, HeartPulse, Download, Mail, PlusCircle, Copy, ShieldBan, Search, Bell, Clock } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
@@ -21,10 +21,14 @@ import {
   SheetTitle,
   SheetDescription
 } from "@/components/ui/sheet";
-import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/card';
+import { Card, CardHeader, CardContent, CardTitle, CardFooter } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
+import { useToast } from "@/hooks/use-toast";
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+
 
 interface ChatPanelProps {
   conversation: Conversation | null;
@@ -47,6 +51,7 @@ export default function ChatPanel({ conversation: initialConversation }: ChatPan
   const [isContextPanelOpen, setIsContextPanelOpen] = useState(false);
   const [newTag, setNewTag] = useState('');
   const [isClient, setIsClient] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     setIsClient(true);
@@ -86,6 +91,16 @@ export default function ChatPanel({ conversation: initialConversation }: ChatPan
     }
   };
 
+  const copyToClipboard = () => {
+      if (conversation) {
+          navigator.clipboard.writeText(conversation.contact.phoneNumber);
+          toast({
+              title: "Copiado!",
+              description: "O número de telefone foi copiado para a área de transferência.",
+          });
+      }
+  }
+
   if (!conversation) {
     return (
       <div className="flex h-full items-center justify-center bg-muted/30 text-muted-foreground">
@@ -106,10 +121,12 @@ export default function ChatPanel({ conversation: initialConversation }: ChatPan
   return (
     <div className="flex flex-col h-full bg-card">
       <header 
-        className="flex items-center justify-between border-b p-3 cursor-pointer hover:bg-muted/50 transition-colors shrink-0"
-        onClick={() => setIsContextPanelOpen(true)}
+        className="flex items-center justify-between border-b p-3 shrink-0"
       >
-          <div className="flex items-center gap-3">
+          <div 
+            className="flex items-center gap-3 cursor-pointer hover:bg-muted/50 transition-colors rounded-md p-1 -m-1"
+            onClick={() => setIsContextPanelOpen(true)}
+           >
             <Avatar className="h-10 w-10 border">
                 <AvatarImage src={conversation.contact.avatarUrl} alt={conversation.contact.name} data-ai-hint="person avatar" />
                 <AvatarFallback>{conversation.contact.name.charAt(0)}</AvatarFallback>
@@ -120,8 +137,60 @@ export default function ChatPanel({ conversation: initialConversation }: ChatPan
             </div>
           </div>
           <div className="flex items-center gap-1">
-              <Button variant="ghost" size="icon"><Phone className="h-5 w-5" /></Button>
-              <Button variant="ghost" size="icon"><MoreVertical className="h-5 w-5"/></Button>
+              <TooltipProvider>
+                  <Tooltip>
+                      <TooltipTrigger asChild>
+                           <Popover>
+                              <PopoverTrigger asChild>
+                                <Button variant="ghost" size="icon"><Tags className="h-5 w-5"/></Button>
+                              </PopoverTrigger>
+                              <PopoverContent className="w-80">
+                                <div className="grid gap-4">
+                                  <div className="space-y-2">
+                                    <h4 className="font-medium leading-none">Tags da Conversa</h4>
+                                    <p className="text-sm text-muted-foreground">
+                                      Adicione ou remova tags para organizar.
+                                    </p>
+                                  </div>
+                                  <div className="flex flex-wrap gap-2">
+                                      {conversation.contact.tags.map(tag => (
+                                          <Badge key={tag} variant="secondary" className="text-sm">
+                                              {tag}
+                                              <button onClick={() => removeTag(tag)} className="ml-2 rounded-full hover:bg-muted-foreground/20 p-0.5">
+                                                  <X className="h-3 w-3" />
+                                              </button>
+                                          </Badge>
+                                      ))}
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                      <Input 
+                                          placeholder="Adicionar nova tag..."
+                                          value={newTag}
+                                          onChange={(e) => setNewTag(e.target.value)}
+                                          onKeyDown={(e) => e.key === 'Enter' && addTag()}
+                                          className="flex-1"
+                                      />
+                                      <Button size="sm" onClick={addTag}><PlusCircle className="h-4 w-4" /></Button>
+                                  </div>
+                                </div>
+                              </PopoverContent>
+                            </Popover>
+                      </TooltipTrigger>
+                      <TooltipContent>Gerenciar Tags</TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                      <TooltipTrigger asChild>
+                          <Button variant="ghost" size="icon"><Bell className="h-5 w-5"/></Button>
+                      </TooltipTrigger>
+                      <TooltipContent>Criar Lembrete</TooltipContent>
+                  </Tooltip>
+                   <Tooltip>
+                      <TooltipTrigger asChild>
+                          <Button variant="ghost" size="icon"><Search className="h-5 w-5"/></Button>
+                      </TooltipTrigger>
+                      <TooltipContent>Pesquisar na Conversa</TooltipContent>
+                  </Tooltip>
+              </TooltipProvider>
           </div>
       </header>
       
@@ -198,8 +267,42 @@ export default function ChatPanel({ conversation: initialConversation }: ChatPan
                             <AvatarFallback>{conversation.contact.name.charAt(0)}</AvatarFallback>
                         </Avatar>
                         <h3 className="text-xl font-semibold">{conversation.contact.name}</h3>
-                        <p className="text-muted-foreground">{conversation.contact.phoneNumber}</p>
+                        <div className="flex items-center gap-2 text-muted-foreground">
+                            <span>{conversation.contact.phoneNumber}</span>
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={copyToClipboard}>
+                                            <Copy className="h-4 w-4"/>
+                                        </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>Copiar número</TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
+                        </div>
                         <p className="text-xs text-muted-foreground mt-1">Ativo desde {contactCreationDate}</p>
+                    </CardContent>
+                </Card>
+
+                <Card>
+                    <CardHeader>
+                      <CardTitle className="text-base flex items-center gap-2">
+                        <HeartPulse className="h-5 w-5"/>
+                        Saúde do Agente
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                         <div className="space-y-2">
+                            <div className="flex justify-between items-baseline">
+                                <span className="text-sm text-muted-foreground">Score de Reputação</span>
+                                <span className={cn("font-bold text-xl", scoreColor)}>{score}</span>
+                            </div>
+                            <Progress value={score} className={cn("h-2 [&>*]:bg-green-500", score < 75 && "[&>*]:bg-yellow-500", score < 50 && "[&>*]:bg-red-500")} />
+                            <div className="flex justify-between items-baseline">
+                                <span className="text-xs text-muted-foreground">Agente: {conversation.agent.internalName}</span>
+                                <span className="text-xs text-muted-foreground capitalize">{conversation.agent.healthProfile.status}</span>
+                            </div>
+                        </div>
                     </CardContent>
                 </Card>
 
@@ -219,34 +322,6 @@ export default function ChatPanel({ conversation: initialConversation }: ChatPan
                     </CardContent>
                 </Card>
 
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-base">Tags da Conversa</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                      <div className="flex flex-wrap gap-2">
-                          {conversation.contact.tags.map(tag => (
-                              <Badge key={tag} variant="secondary" className="text-sm">
-                                  {tag}
-                                  <button onClick={() => removeTag(tag)} className="ml-2 rounded-full hover:bg-muted-foreground/20 p-0.5">
-                                      <X className="h-3 w-3" />
-                                  </button>
-                              </Badge>
-                          ))}
-                      </div>
-                      <div className="flex items-center gap-2">
-                          <Input 
-                              placeholder="Adicionar tag..."
-                              value={newTag}
-                              onChange={(e) => setNewTag(e.target.value)}
-                              onKeyDown={(e) => e.key === 'Enter' && addTag()}
-                              className="flex-1"
-                          />
-                          <Button size="sm" onClick={addTag}><PlusCircle className="h-4 w-4" /></Button>
-                      </div>
-                  </CardContent>
-                </Card>
-
                  <Card>
                     <CardHeader>
                         <CardTitle className="text-base flex items-center justify-between">
@@ -257,11 +332,11 @@ export default function ChatPanel({ conversation: initialConversation }: ChatPan
                     <CardContent className="space-y-3">
                         {conversation.contact.customFields && Object.entries(conversation.contact.customFields).map(([key, value]) => (
                             <div key={key} className="text-sm">
-                                <Label className="font-semibold">{key}</Label>
+                                <Label className="font-semibold capitalize">{key}</Label>
                                 <p className="text-muted-foreground">{value}</p>
                             </div>
                         ))}
-                         {!conversation.contact.customFields && (
+                         {!conversation.contact.customFields || Object.keys(conversation.contact.customFields).length === 0 && (
                             <p className="text-sm text-muted-foreground">Nenhum campo personalizado.</p>
                         )}
                     </CardContent>
@@ -271,9 +346,32 @@ export default function ChatPanel({ conversation: initialConversation }: ChatPan
                     <CardHeader>
                         <CardTitle className="text-base">Ações</CardTitle>
                     </CardHeader>
-                    <CardContent className="grid grid-cols-2 gap-2">
-                        <Button variant="outline"><Mail className="mr-2 h-4 w-4"/> Enviar Transcrição</Button>
+                    <CardContent className="grid grid-cols-1 gap-2">
+                        <Button variant="outline"><Mail className="mr-2 h-4 w-4"/> Enviar Transcrição por E-mail</Button>
                         <Button variant="outline"><Download className="mr-2 h-4 w-4"/> Baixar Transcrição</Button>
+                         <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                                <Button variant="destructive" className="w-full mt-2">
+                                    <ShieldBan className="mr-2 h-4 w-4"/>
+                                    Bloquear Contato
+                                </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                    Esta ação não pode ser desfeita. Isso bloqueará permanentemente o contato de enviar mensagens para este número.
+                                </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                <AlertDialogAction className={cn(buttonVariants({variant: "destructive"}))}>
+                                    Sim, bloquear contato
+                                </AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
+
                     </CardContent>
                 </Card>
 
