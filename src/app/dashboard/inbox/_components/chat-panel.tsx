@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/tabs";
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Label } from '@/components/ui/label';
 
 interface ChatPanelProps {
   conversation: Conversation | null;
@@ -102,8 +103,8 @@ export default function ChatPanel({ conversation: initialConversation, isRightPa
 
 
   return (
-    <div className={cn("grid grid-cols-12 h-full bg-card", !isRightPanelOpen && "grid-cols-1")}>
-      <div className={cn("col-span-8 flex flex-col", !isRightPanelOpen && "col-span-12")}>
+    <div className={cn("grid h-full bg-card", isRightPanelOpen ? "grid-cols-12" : "grid-cols-1")}>
+      <div className={cn("flex flex-col", isRightPanelOpen ? "col-span-8" : "col-span-12")}>
         <CardHeader className="flex flex-row items-center justify-between border-b p-3">
             <div className="flex items-center gap-3">
               <Avatar className="h-10 w-10 border">
