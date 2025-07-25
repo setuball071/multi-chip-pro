@@ -1,7 +1,7 @@
 
 "use client"
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader } from '@/components/ui/card';
@@ -27,6 +27,11 @@ interface ChatPanelProps {
 export default function ChatPanel({ conversation: initialConversation }: ChatPanelProps) {
   const [conversation, setConversation] = useState(initialConversation);
   const [newTag, setNewTag] = useState('');
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   React.useEffect(() => {
     setConversation(initialConversation);
@@ -113,7 +118,7 @@ export default function ChatPanel({ conversation: initialConversation }: ChatPan
                             <Separator className="flex-1" />
                             <div className="flex items-center gap-2 text-xs text-muted-foreground">
                                 <Info className="h-4 w-4" />
-                                <span>Nota de {message.author} em {new Date(message.timestamp).toLocaleTimeString()}</span>
+                                <span>Nota de {message.author} em {isClient ? new Date(message.timestamp).toLocaleTimeString() : ''}</span>
                             </div>
                             <Separator className="flex-1" />
                         </div>
