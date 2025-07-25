@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Conversation } from '@/lib/types';
 import { cn } from '@/lib/utils';
-import { Search } from 'lucide-react';
+import { Search, Bot } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
@@ -24,7 +24,7 @@ export default function ConversationList({
   onSelectConversation,
 }: ConversationListProps) {
   return (
-    <div className="flex flex-col h-full bg-card">
+    <div className="flex flex-col h-full bg-card border-r">
       <div className="p-4 border-b">
         <h2 className="text-xl font-headline">Conversas</h2>
         <div className="relative mt-2">
@@ -46,19 +46,23 @@ export default function ConversationList({
               <AvatarImage src={conv.contact.avatarUrl} alt={conv.contact.name} data-ai-hint="person avatar" />
               <AvatarFallback>{conv.contact.name.charAt(0)}</AvatarFallback>
             </Avatar>
-            <div className="flex-1">
+            <div className="flex-1 overflow-hidden">
               <div className="flex items-center justify-between">
-                <p className="font-semibold">{conv.contact.name}</p>
-                <p className="text-xs text-muted-foreground">
+                <p className="font-semibold truncate">{conv.contact.name}</p>
+                <p className="text-xs text-muted-foreground shrink-0">
                     {formatDistanceToNow(conv.lastMessage.timestamp, { addSuffix: true, locale: ptBR })}
                 </p>
               </div>
-              <p className="text-sm text-muted-foreground truncate max-w-xs">
+              <p className="text-sm text-muted-foreground truncate">
                 {conv.lastMessage.text}
               </p>
+               <div className="flex items-center gap-2 mt-1">
+                <Bot className="h-3 w-3 text-muted-foreground" />
+                <p className="text-xs text-muted-foreground">{conv.agent.internalName}</p>
+               </div>
             </div>
             {conv.unreadCount > 0 && (
-              <Badge className="h-6 w-6 shrink-0 justify-center rounded-full">
+              <Badge className="h-6 w-6 shrink-0 justify-center rounded-full self-center">
                 {conv.unreadCount}
               </Badge>
             )}

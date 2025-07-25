@@ -28,7 +28,7 @@ export default function ChatPanel({ conversation }: ChatPanelProps) {
   }
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full bg-card">
       <CardHeader className="flex flex-row items-center justify-between border-b p-4">
         <div className="flex items-center gap-4">
           <Avatar className="h-10 w-10 border">
@@ -37,7 +37,7 @@ export default function ChatPanel({ conversation }: ChatPanelProps) {
           </Avatar>
           <div>
             <p className="font-semibold">{conversation.contact.name}</p>
-            <p className="text-xs text-muted-foreground">Ativo via {conversation.agent.internalName}</p>
+            <p className="text-xs text-muted-foreground">via {conversation.agent.internalName}</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -63,7 +63,7 @@ export default function ChatPanel({ conversation }: ChatPanelProps) {
                         'max-w-[75%] rounded-lg p-3 text-sm',
                         isAgent
                             ? 'bg-primary text-primary-foreground'
-                            : 'bg-card'
+                            : 'bg-card border'
                         )}
                     >
                         <p>{message.text}</p>
@@ -74,13 +74,11 @@ export default function ChatPanel({ conversation }: ChatPanelProps) {
         </div>
       </ScrollArea>
 
-      <CardFooter className="p-4 border-t">
-        <div className="relative w-full">
-          <Input placeholder="Digite sua mensagem..." className="pr-24" />
-          <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center">
-             <Button variant="ghost" size="icon"><Paperclip className="h-5 w-5"/></Button>
-            <Button><Send className="h-5 w-5" /></Button>
-          </div>
+      <CardFooter className="p-4 border-t bg-background">
+        <div className="flex items-center gap-2 w-full">
+           <Button variant="ghost" size="icon"><Paperclip className="h-5 w-5"/></Button>
+          <Input placeholder="Digite uma mensagem..." className="flex-1" />
+          <Button><Send className="h-5 w-5" /></Button>
         </div>
       </CardFooter>
     </div>
