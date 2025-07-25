@@ -14,7 +14,7 @@ import { ptBR } from 'date-fns/locale';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 
-const getScoreColor = (score: number) => {
+const getScoreBgColor = (score: number) => {
   if (score >= 75) return 'bg-green-500';
   if (score >= 50) return 'bg-yellow-500';
   return 'bg-red-500';
@@ -43,7 +43,7 @@ export default function ConversationList({
       <ScrollArea className="flex-1">
         {conversations.map((conv) => {
             const score = conv.agent.healthProfile.score;
-            const scoreColor = getScoreColor(score);
+            const scoreColor = getScoreBgColor(score);
             return (
               <button
                 key={conv.id}
@@ -64,7 +64,7 @@ export default function ConversationList({
                            <div className={cn("absolute -bottom-1 -right-1 rounded-full h-3.5 w-3.5 border-2 border-card", scoreColor)} />
                         </TooltipTrigger>
                         <TooltipContent side="right">
-                            <p>Score do Agente: {score}</p>
+                            <p>Saúde do Agente: {score} ({conv.agent.healthProfile.status})</p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>

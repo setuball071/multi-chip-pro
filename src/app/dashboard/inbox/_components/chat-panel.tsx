@@ -21,7 +21,7 @@ import {
   SheetTitle,
   SheetDescription
 } from "@/components/ui/sheet";
-import { Card, CardHeader, CardContent, CardTitle, CardFooter } from '@/components/ui/card';
+import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
@@ -286,10 +286,10 @@ export default function ChatPanel({ conversation: initialConversation }: ChatPan
 
                 <Card>
                     <CardHeader>
-                      <CardTitle className="text-base flex items-center gap-2">
+                      <h4 className="font-medium text-base flex items-center gap-2">
                         <HeartPulse className="h-5 w-5"/>
                         Saúde do Agente
-                      </CardTitle>
+                      </h4>
                     </CardHeader>
                     <CardContent>
                          <div className="space-y-2">
@@ -308,10 +308,10 @@ export default function ChatPanel({ conversation: initialConversation }: ChatPan
 
                 <Card>
                     <CardHeader>
-                        <CardTitle className="text-base flex items-center justify-between">
+                        <h4 className="font-medium text-base flex items-center justify-between">
                             <span>Nota de Contato</span>
                             <Button variant="ghost" size="sm">Salvar</Button>
-                        </CardTitle>
+                        </h4>
                     </CardHeader>
                     <CardContent>
                         <Textarea 
@@ -324,10 +324,10 @@ export default function ChatPanel({ conversation: initialConversation }: ChatPan
 
                  <Card>
                     <CardHeader>
-                        <CardTitle className="text-base flex items-center justify-between">
+                        <h4 className="font-medium text-base flex items-center justify-between">
                             <span>Campos Personalizados</span>
                             <Button variant="ghost" size="sm"><PlusCircle className="mr-2 h-4 w-4" /> Adicionar</Button>
-                        </CardTitle>
+                        </h4>
                     </CardHeader>
                     <CardContent className="space-y-3">
                         {conversation.contact.customFields && Object.entries(conversation.contact.customFields).map(([key, value]) => (
@@ -344,7 +344,7 @@ export default function ChatPanel({ conversation: initialConversation }: ChatPan
                 
                  <Card>
                     <CardHeader>
-                        <CardTitle className="text-base">Ações</CardTitle>
+                        <h4 className="font-medium text-base">Ações</h4>
                     </CardHeader>
                     <CardContent className="grid grid-cols-1 gap-2">
                         <Button variant="outline"><Mail className="mr-2 h-4 w-4"/> Enviar Transcrição por E-mail</Button>
