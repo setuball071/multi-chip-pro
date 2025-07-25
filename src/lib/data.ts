@@ -1,4 +1,4 @@
-import type { SimCard, HistoryEntry } from "./types";
+import type { SimCard, HistoryEntry, Conversation, Contact, Message } from "./types";
 
 export const mockSimCards: SimCard[] = [
   {
@@ -111,5 +111,66 @@ export const mockHistory: HistoryEntry[] = [
     date: new Date("2024-01-11T09:00:00Z"),
     details: 'Conversa simulada com "Alto Volume" (20 mensagens).',
     tags: ["vendas", "teste", "aquecimento"],
+  },
+];
+
+
+const contacts: Contact[] = [
+  { id: 'contact-1', name: 'João Silva', phoneNumber: '+55 11 99999-1111', avatarUrl: 'https://placehold.co/100x100?text=JS' },
+  { id: 'contact-2', name: 'Maria Souza', phoneNumber: '+55 21 98888-2222', avatarUrl: 'https://placehold.co/100x100?text=MS' },
+  { id: 'contact-3', name: 'Pedro Costa', phoneNumber: '+55 31 97777-3333' },
+  { id: 'contact-4', name: 'Ana Pereira', phoneNumber: '+55 41 96666-4444', avatarUrl: 'https://placehold.co/100x100?text=AP' },
+];
+
+const generateMessages = (agentId: string): Message[] => [
+  { id: 'msg-1', text: 'Olá! Tenho interesse no produto X. Pode me dar mais detalhes?', timestamp: new Date(new Date().getTime() - 10 * 60000), sender: 'contact', agentId },
+  { id: 'msg-2', text: 'Claro! O produto X tem as seguintes características...', timestamp: new Date(new Date().getTime() - 9 * 60000), sender: 'agent', agentId },
+  { id: 'msg-3', text: 'Qual o valor e as formas de pagamento?', timestamp: new Date(new Date().getTime() - 5 * 60000), sender: 'contact', agentId },
+];
+
+export const mockConversations: Conversation[] = [
+  {
+    id: 'conv-1',
+    contact: contacts[0],
+    agent: mockSimCards[0],
+    messages: generateMessages(mockSimCards[0].id),
+    lastMessage: { id: 'msg-3a', text: 'Qual o valor e as formas de pagamento?', timestamp: new Date(new Date().getTime() - 5 * 60000), sender: 'contact', agentId: mockSimCards[0].id },
+    unreadCount: 1,
+    status: 'open',
+  },
+  {
+    id: 'conv-2',
+    contact: contacts[1],
+    agent: mockSimCards[0],
+    messages: [
+       { id: 'msg-4', text: 'Bom dia, gostaria de agendar uma demonstração.', timestamp: new Date(new Date().getTime() - 2 * 24 * 60 * 60000), sender: 'contact', agentId: mockSimCards[0].id },
+       { id: 'msg-5', text: 'Olá, Maria! Podemos agendar para amanhã às 15h?', timestamp: new Date(new Date().getTime() - 2 * 24 * 60 * 60000 + 300000), sender: 'agent', agentId: mockSimCards[0].id }
+    ],
+    lastMessage: { id: 'msg-5a', text: 'Olá, Maria! Podemos agendar para amanhã às 15h?', timestamp: new Date(new Date().getTime() - 2 * 24 * 60 * 60000 + 300000), sender: 'agent', agentId: mockSimCards[0].id },
+    unreadCount: 0,
+    status: 'open',
+  },
+  {
+    id: 'conv-3',
+    contact: contacts[2],
+    agent: mockSimCards[2],
+    messages: [
+      { id: 'msg-6', text: 'Recebi o produto, mas veio com defeito.', timestamp: new Date(new Date().getTime() - 30 * 60000), sender: 'contact', agentId: mockSimCards[2].id },
+    ],
+    lastMessage: { id: 'msg-6a', text: 'Recebi o produto, mas veio com defeito.', timestamp: new Date(new Date().getTime() - 30 * 60000), sender: 'contact', agentId: mockSimCards[2].id },
+    unreadCount: 2,
+    status: 'pending',
+  },
+    {
+    id: 'conv-4',
+    contact: contacts[3],
+    agent: mockSimCards[4],
+    messages: [
+      { id: 'msg-7', text: 'Obrigado pelo suporte, problema resolvido!', timestamp: new Date(new Date().getTime() - 5 * 24 * 60 * 60000), sender: 'contact', agentId: mockSimCards[4].id },
+      { id: 'msg-8', text: 'Disponha! Qualquer coisa é só chamar.', timestamp: new Date(new Date().getTime() - 5 * 24 * 60 * 60000 + 60000), sender: 'agent', agentId: mockSimCards[4].id }
+    ],
+    lastMessage: { id: 'msg-8a', text: 'Disponha! Qualquer coisa é só chamar.', timestamp: new Date(new Date().getTime() - 5 * 24 * 60 * 60000 + 60000), sender: 'agent', agentId: mockSimCards[4].id },
+    unreadCount: 0,
+    status: 'closed',
   },
 ];
