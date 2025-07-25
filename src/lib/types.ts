@@ -53,6 +53,7 @@ export type Message = {
   agentId: string;
   type: 'message' | 'internal_note';
   author?: string; // Nome do agente que escreveu a nota
+  status?: 'sending' | 'sent' | 'failed';
 };
 
 export type Conversation = {

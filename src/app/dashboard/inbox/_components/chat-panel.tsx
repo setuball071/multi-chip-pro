@@ -4,13 +4,12 @@
 import React, { useState, useEffect } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button, buttonVariants } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Conversation, Message } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { Send, Paperclip, Phone, MoreVertical, Tags, Pencil, Info, X, PanelRightClose, PanelRightOpen, MessageSquare, Star, HeartPulse, Download, Mail, PlusCircle, Copy, ShieldBan, Search, Bell, Clock } from 'lucide-react';
+import { Send, Paperclip, MoreVertical, Tags, Pencil, Info, X, PanelRightClose, PanelRightOpen, MessageSquare, Star, HeartPulse, Download, Mail, PlusCircle, Copy, ShieldBan, Search, Bell, Clock } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
@@ -28,7 +27,7 @@ import { Progress } from '@/components/ui/progress';
 import { useToast } from "@/hooks/use-toast";
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
-
+import { Input } from '@/components/ui/input';
 
 interface ChatPanelProps {
   conversation: Conversation | null;
@@ -103,15 +102,44 @@ export default function ChatPanel({ conversation: initialConversation }: ChatPan
   }
 
   const handleSendMessage = () => {
-    if (messageText.trim() === '') return;
-    
-    console.log("Enviando:", messageText);
-    toast({
-      title: "Mensagem Enviada",
-      description: messageText,
+    if (messageText.trim() === '' || !conversation) return;
+
+    const optimisticMessage: Message = {
+      id: `temp_${Date.now()}`,
+      text: messageText.trim(),
+      timestamp: new Date(),
+      sender: 'agent',
+      agentId: conversation.agent.id,
+      type: 'message',
+      status: 'sending',
+    };
+
+    setConversation(prev => {
+        if (!prev) return null;
+        return {
+            ...prev,
+            messages: [...prev.messages, optimisticMessage],
+        };
     });
+    
     setMessageText('');
+
+    // Simular chamada de API
+    setTimeout(() => {
+        setConversation(prev => {
+            if (!prev) return null;
+            return {
+                ...prev,
+                messages: prev.messages.map(msg => 
+                    msg.id === optimisticMessage.id 
+                        ? { ...msg, status: 'sent', id: `msg_${Date.now()}` } // Atualiza o status e o ID
+                        : msg
+                ),
+            };
+        });
+    }, 1500); // Atraso de 1.5s para simular a rede
   };
+
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === 'Enter' && !event.shiftKey) {
@@ -142,7 +170,7 @@ export default function ChatPanel({ conversation: initialConversation }: ChatPan
       <header 
         className="flex items-center justify-between border-b p-3 shrink-0"
       >
-          <div 
+          <button 
             className="flex items-center gap-3 cursor-pointer hover:bg-muted/50 transition-colors rounded-md p-1 -m-1"
             onClick={() => setIsContextPanelOpen(true)}
            >
@@ -154,7 +182,7 @@ export default function ChatPanel({ conversation: initialConversation }: ChatPan
                 <p className="font-semibold text-lg">{conversation.contact.name}</p>
                 <div className={cn("h-2.5 w-2.5 rounded-full", getScoreBgColor(score))}></div>
             </div>
-          </div>
+          </button>
           <div className="flex items-center gap-1">
               <TooltipProvider>
                   <Tooltip>
@@ -227,7 +255,7 @@ export default function ChatPanel({ conversation: initialConversation }: ChatPan
                             <div className="absolute left-1/2 -translate-x-1/2 -top-2.5 bg-muted/20 px-2">
                                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                                     <Pencil className="h-3 w-3" />
-                                    <span>Nota de {message.author} • {isClient ? new Date(message.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : ''}</span>
+                                     <span>Nota de {message.author} • {isClient ? new Date(message.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : ''}</span>
                                 </div>
                             </div>
                         </div>
@@ -242,15 +270,20 @@ export default function ChatPanel({ conversation: initialConversation }: ChatPan
                                 <AvatarFallback>{conversation.contact.name.charAt(0)}</AvatarFallback>
                             </Avatar>
                         )}
-                        <div
-                            className={cn(
-                            'max-w-[75%] rounded-lg p-3 text-sm',
-                             isAgent
-                                    ? 'bg-primary text-primary-foreground'
-                                    : 'bg-card border'
+                         <div className="flex items-end gap-2">
+                            {isAgent && message.status === 'sending' && (
+                                <Clock className="h-4 w-4 text-muted-foreground animate-spin" />
                             )}
-                        >
-                            <p>{message.text}</p>
+                            <div
+                                className={cn(
+                                'max-w-[75%] rounded-lg p-3 text-sm',
+                                isAgent
+                                        ? 'bg-primary text-primary-foreground'
+                                        : 'bg-card border'
+                                )}
+                            >
+                                <p>{message.text}</p>
+                            </div>
                         </div>
                     </div>
                 )
