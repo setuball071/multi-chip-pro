@@ -29,8 +29,10 @@ export type Message = {
   id: string;
   text: string;
   timestamp: Date;
-  sender: "contact" | "agent";
+  sender: "contact" | "agent" | "system";
   agentId: string;
+  type: "message" | "internal_note";
+  author?: string; // Nome do agente que escreveu a nota
 };
 
 export type Conversation = {
@@ -41,4 +43,5 @@ export type Conversation = {
   lastMessage: Message;
   unreadCount: number;
   status: "open" | "pending" | "closed";
+  tags: string[];
 };

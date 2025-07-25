@@ -123,9 +123,10 @@ const contacts: Contact[] = [
 ];
 
 const generateMessages = (agentId: string): Message[] => [
-  { id: 'msg-1', text: 'Olá! Tenho interesse no produto X. Pode me dar mais detalhes?', timestamp: new Date(new Date().getTime() - 10 * 60000), sender: 'contact', agentId },
-  { id: 'msg-2', text: 'Claro! O produto X tem as seguintes características...', timestamp: new Date(new Date().getTime() - 9 * 60000), sender: 'agent', agentId },
-  { id: 'msg-3', text: 'Qual o valor e as formas de pagamento?', timestamp: new Date(new Date().getTime() - 5 * 60000), sender: 'contact', agentId },
+  { id: 'msg-1', text: 'Olá! Tenho interesse no produto X. Pode me dar mais detalhes?', timestamp: new Date(new Date().getTime() - 10 * 60000), sender: 'contact', agentId, type: 'message' },
+  { id: 'msg-2', text: 'Claro! O produto X tem as seguintes características...', timestamp: new Date(new Date().getTime() - 9 * 60000), sender: 'agent', agentId, type: 'message' },
+  { id: 'msg-note-1', text: 'Cliente parece interessado no pacote premium. Oferecer desconto na próxima mensagem.', timestamp: new Date(new Date().getTime() - 8 * 60000), sender: 'system', agentId, type: 'internal_note', author: 'Agente de Vendas' },
+  { id: 'msg-3', text: 'Qual o valor e as formas de pagamento?', timestamp: new Date(new Date().getTime() - 5 * 60000), sender: 'contact', agentId, type: 'message' },
 ];
 
 export const mockConversations: Conversation[] = [
@@ -134,43 +135,47 @@ export const mockConversations: Conversation[] = [
     contact: contacts[0],
     agent: mockSimCards[0],
     messages: generateMessages(mockSimCards[0].id),
-    lastMessage: { id: 'msg-3a', text: 'Qual o valor e as formas de pagamento?', timestamp: new Date(new Date().getTime() - 5 * 60000), sender: 'contact', agentId: mockSimCards[0].id },
+    lastMessage: { id: 'msg-3a', text: 'Qual o valor e as formas de pagamento?', timestamp: new Date(new Date().getTime() - 5 * 60000), sender: 'contact', agentId: mockSimCards[0].id, type: 'message' },
     unreadCount: 1,
     status: 'open',
+    tags: ['lead-quente', 'produto-x']
   },
   {
     id: 'conv-2',
     contact: contacts[1],
     agent: mockSimCards[0],
     messages: [
-       { id: 'msg-4', text: 'Bom dia, gostaria de agendar uma demonstração.', timestamp: new Date(new Date().getTime() - 2 * 24 * 60 * 60000), sender: 'contact', agentId: mockSimCards[0].id },
-       { id: 'msg-5', text: 'Olá, Maria! Podemos agendar para amanhã às 15h?', timestamp: new Date(new Date().getTime() - 2 * 24 * 60 * 60000 + 300000), sender: 'agent', agentId: mockSimCards[0].id }
+       { id: 'msg-4', text: 'Bom dia, gostaria de agendar uma demonstração.', timestamp: new Date(new Date().getTime() - 2 * 24 * 60 * 60000), sender: 'contact', agentId: mockSimCards[0].id, type: 'message' },
+       { id: 'msg-5', text: 'Olá, Maria! Podemos agendar para amanhã às 15h?', timestamp: new Date(new Date().getTime() - 2 * 24 * 60 * 60000 + 300000), sender: 'agent', agentId: mockSimCards[0].id, type: 'message' }
     ],
-    lastMessage: { id: 'msg-5a', text: 'Olá, Maria! Podemos agendar para amanhã às 15h?', timestamp: new Date(new Date().getTime() - 2 * 24 * 60 * 60000 + 300000), sender: 'agent', agentId: mockSimCards[0].id },
+    lastMessage: { id: 'msg-5a', text: 'Olá, Maria! Podemos agendar para amanhã às 15h?', timestamp: new Date(new Date().getTime() - 2 * 24 * 60 * 60000 + 300000), sender: 'agent', agentId: mockSimCards[0].id, type: 'message' },
     unreadCount: 0,
     status: 'open',
+    tags: ['agendamento']
   },
   {
     id: 'conv-3',
     contact: contacts[2],
     agent: mockSimCards[2],
     messages: [
-      { id: 'msg-6', text: 'Recebi o produto, mas veio com defeito.', timestamp: new Date(new Date().getTime() - 30 * 60000), sender: 'contact', agentId: mockSimCards[2].id },
+      { id: 'msg-6', text: 'Recebi o produto, mas veio com defeito.', timestamp: new Date(new Date().getTime() - 30 * 60000), sender: 'contact', agentId: mockSimCards[2].id, type: 'message' },
     ],
-    lastMessage: { id: 'msg-6a', text: 'Recebi o produto, mas veio com defeito.', timestamp: new Date(new Date().getTime() - 30 * 60000), sender: 'contact', agentId: mockSimCards[2].id },
+    lastMessage: { id: 'msg-6a', text: 'Recebi o produto, mas veio com defeito.', timestamp: new Date(new Date().getTime() - 30 * 60000), sender: 'contact', agentId: mockSimCards[2].id, type: 'message' },
     unreadCount: 2,
     status: 'pending',
+    tags: ['suporte', 'defeito']
   },
     {
     id: 'conv-4',
     contact: contacts[3],
     agent: mockSimCards[4],
     messages: [
-      { id: 'msg-7', text: 'Obrigado pelo suporte, problema resolvido!', timestamp: new Date(new Date().getTime() - 5 * 24 * 60 * 60000), sender: 'contact', agentId: mockSimCards[4].id },
-      { id: 'msg-8', text: 'Disponha! Qualquer coisa é só chamar.', timestamp: new Date(new Date().getTime() - 5 * 24 * 60 * 60000 + 60000), sender: 'agent', agentId: mockSimCards[4].id }
+      { id: 'msg-7', text: 'Obrigado pelo suporte, problema resolvido!', timestamp: new Date(new Date().getTime() - 5 * 24 * 60 * 60000), sender: 'contact', agentId: mockSimCards[4].id, type: 'message' },
+      { id: 'msg-8', text: 'Disponha! Qualquer coisa é só chamar.', timestamp: new Date(new Date().getTime() - 5 * 24 * 60 * 60000 + 60000), sender: 'agent', agentId: mockSimCards[4].id, type: 'message' }
     ],
-    lastMessage: { id: 'msg-8a', text: 'Disponha! Qualquer coisa é só chamar.', timestamp: new Date(new Date().getTime() - 5 * 24 * 60 * 60000 + 60000), sender: 'agent', agentId: mockSimCards[4].id },
+    lastMessage: { id: 'msg-8a', text: 'Disponha! Qualquer coisa é só chamar.', timestamp: new Date(new Date().getTime() - 5 * 24 * 60 * 60000 + 60000), sender: 'agent', agentId: mockSimCards[4].id, type: 'message' },
     unreadCount: 0,
     status: 'closed',
+    tags: ['resolvido']
   },
 ];
