@@ -18,7 +18,8 @@ import {
   SheetContent,
   SheetHeader,
   SheetTitle,
-  SheetDescription
+  SheetDescription,
+  SheetFooter
 } from "@/components/ui/sheet";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -28,6 +29,8 @@ import { useToast } from "@/hooks/use-toast";
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Input } from '@/components/ui/input';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
 
 interface ChatPanelProps {
   conversation: Conversation | null;
@@ -51,6 +54,7 @@ export default function ChatPanel({ conversation: initialConversation }: ChatPan
   const [newTag, setNewTag] = useState('');
   const [isClient, setIsClient] = useState(false);
   const [messageText, setMessageText] = useState('');
+  const [activeTab, setActiveTab] = useState("message");
   const { toast } = useToast();
 
   useEffect(() => {
@@ -104,13 +108,16 @@ export default function ChatPanel({ conversation: initialConversation }: ChatPan
   const handleSendMessage = () => {
     if (messageText.trim() === '' || !conversation) return;
 
+    const messageType = activeTab === 'note' ? 'internal_note' : 'message';
+
     const optimisticMessage: Message = {
       id: `temp_${Date.now()}`,
       text: messageText.trim(),
       timestamp: new Date(),
       sender: 'agent',
       agentId: conversation.agent.id,
-      type: 'message',
+      type: messageType,
+      author: messageType === 'internal_note' ? 'Agente de Vendas' : undefined,
       status: 'sending',
     };
 
@@ -247,6 +254,7 @@ export default function ChatPanel({ conversation: initialConversation }: ChatPan
             {conversation.messages.map((message) => {
                 const isAgent = message.sender === 'agent';
                 const isInternalNote = message.type === 'internal_note';
+                const localeTimeString = isClient ? new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute:'2-digit' }) : '';
 
                 if (isInternalNote) {
                     return (
@@ -255,7 +263,7 @@ export default function ChatPanel({ conversation: initialConversation }: ChatPan
                             <div className="absolute left-1/2 -translate-x-1/2 -top-2.5 bg-muted/20 px-2">
                                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                                     <Pencil className="h-3 w-3" />
-                                     <span>Nota de {message.author} • {isClient ? new Date(message.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : ''}</span>
+                                     <span>Nota de {message.author} • {localeTimeString}</span>
                                 </div>
                             </div>
                         </div>
@@ -263,27 +271,27 @@ export default function ChatPanel({ conversation: initialConversation }: ChatPan
                 }
 
                 return (
-                    <div key={message.id} className={cn("flex items-end gap-2", isAgent ? 'justify-end' : 'justify-start' )}>
-                        {!isAgent && (
-                            <Avatar className="h-8 w-8 border self-end">
-                                <AvatarImage src={conversation.contact.avatarUrl} alt={conversation.contact.name} data-ai-hint="person avatar" />
-                                <AvatarFallback>{conversation.contact.name.charAt(0)}</AvatarFallback>
-                            </Avatar>
-                        )}
-                         <div className="flex items-end gap-2">
-                            {isAgent && message.status === 'sending' && (
-                                <Clock className="h-4 w-4 text-muted-foreground animate-spin" />
-                            )}
-                            <div
-                                className={cn(
-                                'max-w-[75%] rounded-lg p-3 text-sm',
-                                isAgent
-                                        ? 'bg-primary text-primary-foreground'
-                                        : 'bg-card border'
-                                )}
-                            >
-                                <p>{message.text}</p>
-                            </div>
+                     <div key={message.id} className={cn("flex w-full", isAgent ? 'justify-end' : 'justify-start' )}>
+                        <div className='flex items-end gap-2'>
+                          {!isAgent && (
+                              <Avatar className="h-8 w-8 border self-end">
+                                  <AvatarImage src={conversation.contact.avatarUrl} alt={conversation.contact.name} data-ai-hint="person avatar" />
+                                  <AvatarFallback>{conversation.contact.name.charAt(0)}</AvatarFallback>
+                              </Avatar>
+                          )}
+                           {isAgent && message.status === 'sending' && (
+                              <Clock className="h-4 w-4 text-muted-foreground animate-spin" />
+                          )}
+                          <div
+                              className={cn(
+                              'max-w-[75%] rounded-lg p-3 text-sm break-words',
+                              isAgent
+                                      ? 'bg-primary text-primary-foreground'
+                                      : 'bg-card border'
+                              )}
+                          >
+                              <p>{message.text}</p>
+                          </div>
                         </div>
                     </div>
                 )
@@ -293,10 +301,18 @@ export default function ChatPanel({ conversation: initialConversation }: ChatPan
       </main>
 
       <footer className="p-4 border-t bg-background shrink-0">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid w-full grid-cols-2 mb-2">
+            <TabsTrigger value="message">Mensagem</TabsTrigger>
+            <TabsTrigger value="note">Nota Interna</TabsTrigger>
+          </TabsList>
           <div className="relative flex items-end w-full gap-2">
               <Textarea 
-                placeholder="Digite uma mensagem..." 
-                className="pr-20 min-h-0" 
+                placeholder={activeTab === 'message' ? "Digite uma mensagem..." : "Digite uma nota interna..."}
+                className={cn(
+                  "pr-20 min-h-0",
+                  activeTab === 'note' && "bg-yellow-500/10 focus:bg-yellow-500/10"
+                )}
                 rows={1}
                 value={messageText}
                 onChange={(e) => setMessageText(e.target.value)}
@@ -307,6 +323,7 @@ export default function ChatPanel({ conversation: initialConversation }: ChatPan
                   <Button size="sm" onClick={handleSendMessage} disabled={!messageText.trim()}><Send className="h-4 w-4 mr-2" /> Enviar</Button>
               </div>
           </div>
+        </Tabs>
       </footer>
 
       <Sheet open={isContextPanelOpen} onOpenChange={setIsContextPanelOpen}>
