@@ -9,6 +9,18 @@ export const mockSimCards: SimCard[] = [
     tags: ["vendas", "geração-de-leads"],
     messageCount: 254,
     createdAt: new Date("2023-10-01T10:00:00Z"),
+    healthProfile: {
+      score: 92,
+      total_sent_today: 30,
+      total_received_today: 28,
+      total_replies_to_our_messages: 25,
+      total_blocks_reported: 0,
+      session_start_count: 5,
+      status: "active",
+      strategy: "moderate",
+      last_calculation: new Date(),
+      last_human_like_action: new Date(),
+    }
   },
   {
     id: "sim-002",
@@ -18,6 +30,18 @@ export const mockSimCards: SimCard[] = [
     tags: ["suporte"],
     messageCount: 42,
     createdAt: new Date("2023-11-15T14:30:00Z"),
+    healthProfile: {
+      score: 78,
+      total_sent_today: 10,
+      total_received_today: 9,
+      total_replies_to_our_messages: 8,
+      total_blocks_reported: 0,
+      session_start_count: 1,
+      status: "warming",
+      strategy: "slow",
+      last_calculation: new Date(),
+      last_human_like_action: new Date(),
+    }
   },
   {
     id: "sim-003",
@@ -27,6 +51,18 @@ export const mockSimCards: SimCard[] = [
     tags: ["marketing", "promo-t1"],
     messageCount: 1052,
     createdAt: new Date("2023-09-05T09:00:00Z"),
+     healthProfile: {
+      score: 85,
+      total_sent_today: 150,
+      total_received_today: 130,
+      total_replies_to_our_messages: 100,
+      total_blocks_reported: 0,
+      session_start_count: 20,
+      status: "active",
+      strategy: "aggressive",
+      last_calculation: new Date(),
+      last_human_like_action: new Date(),
+    }
   },
   {
     id: "sim-004",
@@ -36,6 +72,18 @@ export const mockSimCards: SimCard[] = [
     tags: ["interno", "dev"],
     messageCount: 12,
     createdAt: new Date("2023-12-01T11:00:00Z"),
+    healthProfile: {
+      score: 15,
+      total_sent_today: 12,
+      total_received_today: 0,
+      total_replies_to_our_messages: 0,
+      total_blocks_reported: 1,
+      session_start_count: 12,
+      status: "banned",
+      strategy: "none",
+      last_calculation: new Date(),
+      last_human_like_action: new Date(),
+    }
   },
   {
     id: "sim-005",
@@ -45,6 +93,18 @@ export const mockSimCards: SimCard[] = [
     tags: ["suporte", "principal"],
     messageCount: 576,
     createdAt: new Date("2023-08-20T16:45:00Z"),
+    healthProfile: {
+      score: 65,
+      total_sent_today: 80,
+      total_received_today: 50,
+      total_replies_to_our_messages: 45,
+      total_blocks_reported: 0,
+      session_start_count: 10,
+      status: "risky",
+      strategy: "moderate",
+      last_calculation: new Date(),
+      last_human_like_action: new Date(),
+    }
   },
     {
     id: "sim-006",
@@ -54,6 +114,18 @@ export const mockSimCards: SimCard[] = [
     tags: ["vendas", "teste"],
     messageCount: 88,
     createdAt: new Date("2024-01-10T12:00:00Z"),
+    healthProfile: {
+      score: 45,
+      total_sent_today: 40,
+      total_received_today: 15,
+      total_replies_to_our_messages: 10,
+      total_blocks_reported: 0,
+      session_start_count: 30,
+      status: "cooldown",
+      strategy: "slow",
+      last_calculation: new Date(),
+      last_human_like_action: new Date(),
+    }
   },
   {
     id: "sim-007",
@@ -63,6 +135,18 @@ export const mockSimCards: SimCard[] = [
     tags: ["marketing", "notificações"],
     messageCount: 3421,
     createdAt: new Date("2023-07-01T08:00:00Z"),
+     healthProfile: {
+      score: 95,
+      total_sent_today: 500,
+      total_received_today: 480,
+      total_replies_to_our_messages: 400,
+      total_blocks_reported: 0,
+      session_start_count: 50,
+      status: "active",
+      strategy: "aggressive",
+      last_calculation: new Date(),
+      last_human_like_action: new Date(),
+    }
   },
 ];
 

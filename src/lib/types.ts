@@ -1,18 +1,32 @@
+export type HealthProfile = {
+  score: number;
+  total_sent_today: number;
+  total_received_today: number;
+  total_replies_to_our_messages: number;
+  total_blocks_reported: number;
+  session_start_count: number;
+  status: 'warming' | 'active' | 'risky' | 'cooldown' | 'banned';
+  strategy: 'none' | 'slow' | 'moderate' | 'aggressive';
+  last_calculation: Date;
+  last_human_like_action: Date;
+};
+
 export type SimCard = {
   id: string;
   internalName: string;
   phoneNumber: string;
-  status: "active" | "blocked" | "warming up";
+  status: 'active' | 'blocked' | 'warming up';
   tags: string[];
   messageCount: number;
   createdAt: Date;
+  healthProfile: HealthProfile;
 };
 
 export type HistoryEntry = {
   id: string;
   simId: string;
   simName: string;
-  type: "warm-up" | "broadcast";
+  type: 'warm-up' | 'broadcast';
   date: Date;
   details: string;
   tags: string[];
@@ -29,9 +43,9 @@ export type Message = {
   id: string;
   text: string;
   timestamp: Date;
-  sender: "contact" | "agent" | "system";
+  sender: 'contact' | 'agent' | 'system';
   agentId: string;
-  type: "message" | "internal_note";
+  type: 'message' | 'internal_note';
   author?: string; // Nome do agente que escreveu a nota
 };
 
@@ -42,6 +56,6 @@ export type Conversation = {
   messages: Message[];
   lastMessage: Message;
   unreadCount: number;
-  status: "open" | "pending" | "closed";
+  status: 'open' | 'pending' | 'closed';
   tags: string[];
 };
