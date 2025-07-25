@@ -4,12 +4,11 @@
 import React, { useState, useEffect } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Card, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Conversation, Message } from '@/lib/types';
 import { cn } from '@/lib/utils';
-import { Send, Paperclip, Phone, MoreVertical, Tags, Pencil, Info, X } from 'lucide-react';
+import { Send, Paperclip, Phone, MoreVertical, Tags, Pencil, Info, X, PanelRightClose, PanelRightOpen, MessageSquare, Star } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
@@ -18,13 +17,23 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@/components/ui/tabs"
+} from "@/components/ui/tabs";
+import { Card, CardHeader, CardContent } from '@/components/ui/card';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface ChatPanelProps {
   conversation: Conversation | null;
+  isRightPanelOpen: boolean;
+  setIsRightPanelOpen: (isOpen: boolean) => void;
 }
 
-export default function ChatPanel({ conversation: initialConversation }: ChatPanelProps) {
+const getScoreColor = (score: number) => {
+  if (score >= 75) return 'text-green-500';
+  if (score >= 50) return 'text-yellow-500';
+  return 'text-red-500';
+};
+
+export default function ChatPanel({ conversation: initialConversation, isRightPanelOpen, setIsRightPanelOpen }: ChatPanelProps) {
   const [conversation, setConversation] = useState(initialConversation);
   const [newTag, setNewTag] = useState('');
   const [isClient, setIsClient] = useState(false);
@@ -79,48 +88,84 @@ export default function ChatPanel({ conversation: initialConversation }: ChatPan
     return (
       <div className="flex h-full items-center justify-center bg-card text-muted-foreground">
         <div className="text-center">
-            <p className="text-lg font-medium">Selecione uma conversa</p>
+            <MessageSquare className="mx-auto h-12 w-12 text-muted-foreground/50" />
+            <p className="text-lg font-medium mt-4">Selecione uma conversa</p>
             <p className="text-sm">Escolha uma conversa na lista para ver as mensagens.</p>
         </div>
       </div>
     );
   }
+  
+  const score = conversation.agent.healthProfile.score;
+  const status = conversation.agent.healthProfile.status;
+  const scoreColor = getScoreColor(score);
+
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 h-full bg-card">
-      <div className="md:col-span-2 flex flex-col">
-        <CardHeader className="flex flex-row items-center justify-between border-b p-4">
-            <div className="flex items-center gap-4">
-            <Avatar className="h-10 w-10 border">
-                <AvatarImage src={conversation.contact.avatarUrl} alt={conversation.contact.name} data-ai-hint="person avatar" />
-                <AvatarFallback>{conversation.contact.name.charAt(0)}</AvatarFallback>
-            </Avatar>
-            <div>
-                <p className="font-semibold">{conversation.contact.name}</p>
-                <p className="text-xs text-muted-foreground">via {conversation.agent.internalName}</p>
+    <div className={cn("grid grid-cols-12 h-full bg-card", !isRightPanelOpen && "grid-cols-1")}>
+      <div className={cn("col-span-8 flex flex-col", !isRightPanelOpen && "col-span-12")}>
+        <CardHeader className="flex flex-row items-center justify-between border-b p-3">
+            <div className="flex items-center gap-3">
+              <Avatar className="h-10 w-10 border">
+                  <AvatarImage src={conversation.contact.avatarUrl} alt={conversation.contact.name} data-ai-hint="person avatar" />
+                  <AvatarFallback>{conversation.contact.name.charAt(0)}</AvatarFallback>
+              </Avatar>
+              <div>
+                  <p className="font-semibold text-lg">{conversation.contact.name}</p>
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <span>📞 via {conversation.agent.internalName}</span>
+                    <Separator orientation="vertical" className="h-3"/>
+                     <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <span className={cn("flex items-center gap-1", scoreColor)}>
+                                    <Star className="h-3 w-3" />
+                                    <b>Score: {score}</b> ({status})
+                                </span>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p>Reputação do agente</p>
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
+                  </div>
+              </div>
             </div>
-            </div>
-            <div className="flex items-center gap-2">
-                <Button variant="ghost" size="icon"><Phone /></Button>
-                <Button variant="ghost" size="icon"><MoreVertical /></Button>
+            <div className="flex items-center gap-1">
+                <Button variant="ghost" size="icon"><Phone className="h-4 w-4" /></Button>
+                <Button variant="ghost" size="icon"><MoreVertical className="h-4 w-4"/></Button>
+                 <Separator orientation="vertical" className="h-6 mx-2"/>
+                 <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <Button variant="ghost" size="icon" onClick={() => setIsRightPanelOpen(!isRightPanelOpen)}>
+                                {isRightPanelOpen ? <PanelRightClose className="h-5 w-5" /> : <PanelRightOpen className="h-5 w-5" />}
+                            </Button>
+                        </TooltipTrigger>
+                         <TooltipContent>
+                            <p>{isRightPanelOpen ? 'Ocultar painel' : 'Mostrar painel'}</p>
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
             </div>
         </CardHeader>
         
         <ScrollArea className="flex-1 bg-muted/20">
             <div className="p-4 space-y-4">
-            {conversation.messages.map((message) => {
+            {conversation.messages.map((message, index) => {
                 const isAgent = message.sender === 'agent';
                 const isInternalNote = message.type === 'internal_note';
 
                 if (isInternalNote) {
                     return (
-                        <div key={message.id} className="flex items-center gap-2 my-4">
-                            <Separator className="flex-1" />
-                            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                                <Info className="h-4 w-4" />
-                                <span>Nota de {message.author} em {isClient ? new Date(message.timestamp).toLocaleTimeString() : ''}</span>
+                        <div key={message.id} className="relative my-4">
+                            <Separator />
+                            <div className="absolute left-1/2 -translate-x-1/2 -top-2.5 bg-muted/20 px-2">
+                                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                    <Pencil className="h-3 w-3" />
+                                    <span>Nota de {message.author} • {isClient ? new Date(message.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : ''}</span>
+                                </div>
                             </div>
-                            <Separator className="flex-1" />
                         </div>
                     )
                 }
@@ -128,7 +173,7 @@ export default function ChatPanel({ conversation: initialConversation }: ChatPan
                 return (
                     <div key={message.id} className={cn("flex items-end gap-2", isAgent ? 'justify-end' : 'justify-start' )}>
                         {!isAgent && (
-                            <Avatar className="h-8 w-8 border">
+                            <Avatar className="h-8 w-8 border self-end">
                                 <AvatarImage src={conversation.contact.avatarUrl} alt={conversation.contact.name} data-ai-hint="person avatar" />
                                 <AvatarFallback>{conversation.contact.name.charAt(0)}</AvatarFallback>
                             </Avatar>
@@ -136,9 +181,7 @@ export default function ChatPanel({ conversation: initialConversation }: ChatPan
                         <div
                             className={cn(
                             'max-w-[75%] rounded-lg p-3 text-sm',
-                             isInternalNote 
-                                ? 'bg-yellow-100 dark:bg-yellow-900/50 text-yellow-900 dark:text-yellow-200 border border-yellow-200 dark:border-yellow-800'
-                                : isAgent
+                             isAgent
                                     ? 'bg-primary text-primary-foreground'
                                     : 'bg-card border'
                             )}
@@ -158,68 +201,86 @@ export default function ChatPanel({ conversation: initialConversation }: ChatPan
                     <TabsTrigger value="note">Nota Interna</TabsTrigger>
                 </TabsList>
                 <TabsContent value="message">
-                    <div className="flex items-center gap-2 w-full mt-2">
-                        <Button variant="ghost" size="icon"><Paperclip className="h-5 w-5"/></Button>
-                        <Input placeholder="Digite uma mensagem... (/ para atalhos)" className="flex-1" />
-                        <Button><Send className="h-5 w-5" /></Button>
+                    <div className="relative flex items-center w-full mt-2">
+                        <Input placeholder="Digite uma mensagem... (/ para atalhos)" className="pr-20" />
+                        <div className="absolute right-1 flex items-center">
+                            <Button variant="ghost" size="icon"><Paperclip className="h-5 w-5 text-muted-foreground"/></Button>
+                            <Button size="sm"><Send className="h-4 w-4 mr-2" /> Enviar</Button>
+                        </div>
                     </div>
                 </TabsContent>
                 <TabsContent value="note">
-                    <div className="space-y-2 mt-2">
+                     <div className="relative flex items-center w-full mt-2">
                         <Textarea 
                             placeholder="Adicione uma nota interna para a equipe... (não será vista pelo contato)" 
                             id="internal-note-textarea"
-                            className="bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800/50"
+                            className="bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800/50 pr-28"
                         />
-                        <Button size="sm" onClick={() => {
-                            const textarea = document.getElementById('internal-note-textarea') as HTMLTextAreaElement;
-                            addInternalNote(textarea.value);
-                            textarea.value = '';
-                        }}>
-                            <Pencil className="mr-2 h-4 w-4" />
-                            Adicionar Nota
-                        </Button>
+                        <div className="absolute bottom-2 right-2">
+                            <Button size="sm" onClick={() => {
+                                const textarea = document.getElementById('internal-note-textarea') as HTMLTextAreaElement;
+                                addInternalNote(textarea.value);
+                                textarea.value = '';
+                            }}>
+                                <Pencil className="mr-2 h-4 w-4" />
+                                Adicionar Nota
+                            </Button>
+                        </div>
                     </div>
                 </TabsContent>
             </Tabs>
         </div>
       </div>
-      <div className="md:col-span-1 border-l bg-card flex flex-col">
-          <CardHeader className="border-b">
-                <h3 className="font-semibold text-lg flex items-center gap-2"><Tags className="h-5 w-5" /> Tags da Conversa</h3>
-          </CardHeader>
-          <div className="p-4 space-y-3">
-             <div className="flex flex-wrap gap-2">
-                {conversation.tags.map(tag => (
-                    <Badge key={tag} variant="secondary" className="text-sm">
-                        {tag}
-                        <button onClick={() => removeTag(tag)} className="ml-2 rounded-full hover:bg-muted-foreground/20 p-0.5">
-                            <X className="h-3 w-3" />
-                        </button>
-                    </Badge>
-                ))}
-            </div>
-            <div className="flex items-center gap-2">
-                <Input 
-                    placeholder="Adicionar tag..."
-                    value={newTag}
-                    onChange={(e) => setNewTag(e.target.value)}
-                    onKeyDown={(e) => e.key === 'Enter' && addTag()}
-                    className="flex-1"
-                />
-                <Button size="sm" onClick={addTag}>Adicionar</Button>
-            </div>
-          </div>
-          <Separator />
-           <CardHeader>
-              <h3 className="font-semibold text-lg flex items-center gap-2"><Info className="h-5 w-5" /> Informações do Contato</h3>
-          </CardHeader>
-           <div className="p-4 space-y-2 text-sm">
-              <p><strong>Nome:</strong> {conversation.contact.name}</p>
-              <p><strong>Telefone:</strong> {conversation.contact.phoneNumber}</p>
-           </div>
-
-      </div>
+      {isRightPanelOpen && (
+        <div className="col-span-4 border-l bg-background flex flex-col">
+            <Card className="border-0 rounded-none shadow-none">
+            <Tabs defaultValue="info">
+                <CardHeader className="p-0 border-b">
+                    <TabsList className="grid w-full grid-cols-2 rounded-none h-auto p-0 bg-transparent">
+                        <TabsTrigger value="info" className="py-3 rounded-none border-b-2 border-b-transparent data-[state=active]:border-b-primary data-[state=active]:shadow-none data-[state=active]:bg-muted/50">Informações</TabsTrigger>
+                        <TabsTrigger value="tags" className="py-3 rounded-none border-b-2 border-b-transparent data-[state=active]:border-b-primary data-[state=active]:shadow-none data-[state=active]:bg-muted/50">Tags</TabsTrigger>
+                    </TabsList>
+                </CardHeader>
+                <TabsContent value="info">
+                    <CardContent className="p-4 space-y-4 text-sm">
+                         <div className="space-y-1">
+                            <Label>Nome</Label>
+                            <p className="text-muted-foreground">{conversation.contact.name}</p>
+                         </div>
+                         <div className="space-y-1">
+                            <Label>Telefone</Label>
+                            <p className="text-muted-foreground">{conversation.contact.phoneNumber}</p>
+                         </div>
+                    </CardContent>
+                </TabsContent>
+                <TabsContent value="tags">
+                    <CardContent className="p-4 space-y-3">
+                        <div className="flex flex-wrap gap-2">
+                            {conversation.tags.map(tag => (
+                                <Badge key={tag} variant="secondary" className="text-sm">
+                                    {tag}
+                                    <button onClick={() => removeTag(tag)} className="ml-2 rounded-full hover:bg-muted-foreground/20 p-0.5">
+                                        <X className="h-3 w-3" />
+                                    </button>
+                                </Badge>
+                            ))}
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <Input 
+                                placeholder="Adicionar tag..."
+                                value={newTag}
+                                onChange={(e) => setNewTag(e.target.value)}
+                                onKeyDown={(e) => e.key === 'Enter' && addTag()}
+                                className="flex-1"
+                            />
+                            <Button size="sm" onClick={addTag}>Adicionar</Button>
+                        </div>
+                    </CardContent>
+                </TabsContent>
+            </Tabs>
+           </Card>
+        </div>
+      )}
     </div>
   );
 }

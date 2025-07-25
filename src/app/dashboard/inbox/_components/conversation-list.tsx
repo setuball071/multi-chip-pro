@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Conversation } from '@/lib/types';
 import { cn } from '@/lib/utils';
-import { Search, Bot } from 'lucide-react';
+import { Search, Users } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
@@ -26,10 +26,10 @@ export default function ConversationList({
   return (
     <div className="flex flex-col h-full bg-card border-r">
       <div className="p-4 border-b">
-        <h2 className="text-xl font-headline">Conversas</h2>
+        <h2 className="text-xl font-headline flex items-center gap-2"><Users className="h-6 w-6" /> Caixa de Entrada</h2>
         <div className="relative mt-2">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input placeholder="Pesquisar..." className="pl-8" />
+            <Input placeholder="Pesquisar conversas..." className="pl-8" />
         </div>
       </div>
       <ScrollArea className="flex-1">
@@ -38,7 +38,7 @@ export default function ConversationList({
             key={conv.id}
             onClick={() => onSelectConversation(conv)}
             className={cn(
-              'flex w-full items-start gap-4 p-4 text-left transition-colors hover:bg-muted/50',
+              'flex w-full items-start gap-4 p-4 text-left transition-colors hover:bg-muted/50 border-b border-border',
               selectedConversation?.id === conv.id && 'bg-muted'
             )}
           >
@@ -54,17 +54,18 @@ export default function ConversationList({
                 </p>
               </div>
               <p className="text-sm text-muted-foreground truncate">
-                {conv.lastMessage.text}
+                {conv.lastMessage.sender === 'agent' ? 'Você: ' : ''}{conv.lastMessage.text}
               </p>
-               <div className="flex items-center gap-2 mt-1">
-                <Bot className="h-3 w-3 text-muted-foreground" />
-                <p className="text-xs text-muted-foreground">{conv.agent.internalName}</p>
+               <div className="flex items-center gap-2 mt-1.5">
+                <Badge variant="outline" className="text-xs">{conv.agent.internalName}</Badge>
                </div>
             </div>
             {conv.unreadCount > 0 && (
-              <Badge className="h-6 w-6 shrink-0 justify-center rounded-full self-center">
-                {conv.unreadCount}
-              </Badge>
+              <div className="flex flex-col items-center justify-center gap-1.5 self-center">
+                 <Badge className="h-6 w-6 shrink-0 justify-center rounded-full bg-primary text-primary-foreground">
+                    {conv.unreadCount}
+                </Badge>
+              </div>
             )}
           </button>
         ))}
