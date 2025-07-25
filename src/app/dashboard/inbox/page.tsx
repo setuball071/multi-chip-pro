@@ -12,18 +12,18 @@ export default function InboxPage() {
 
   return (
     <div className="grid grid-cols-12 h-[calc(100vh-100px)] border rounded-lg shadow-sm overflow-hidden">
-      <div className="col-span-12 md:col-span-4 lg:col-span-3">
+      <aside className="col-span-12 md:col-span-4 lg:col-span-3">
         <ConversationList
           conversations={mockConversations}
           selectedConversation={selectedConversation}
           onSelectConversation={setSelectedConversation}
         />
-      </div>
-      <div className="col-span-12 md:col-span-8 lg:col-span-9">
+      </aside>
+      <section className="col-span-12 md:col-span-8 lg:col-span-9">
         <ChatPanel 
           conversation={selectedConversation} 
         />
-      </div>
+      </section>
     </div>
   );
 }

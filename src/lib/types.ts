@@ -37,6 +37,10 @@ export type Contact = {
   name: string;
   phoneNumber: string;
   avatarUrl?: string;
+  createdAt: Date;
+  tags: string[];
+  internalNote?: string;
+  customFields?: Record<string, string>;
 };
 
 export type Message = {
@@ -57,5 +61,4 @@ export type Conversation = {
   lastMessage: Message;
   unreadCount: number;
   status: 'open' | 'pending' | 'closed';
-  tags: string[];
 };

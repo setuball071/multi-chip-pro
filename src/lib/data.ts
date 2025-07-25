@@ -200,10 +200,42 @@ export const mockHistory: HistoryEntry[] = [
 
 
 const contacts: Contact[] = [
-  { id: 'contact-1', name: 'João Silva', phoneNumber: '+55 11 99999-1111', avatarUrl: 'https://placehold.co/100x100?text=JS' },
-  { id: 'contact-2', name: 'Maria Souza', phoneNumber: '+55 21 98888-2222', avatarUrl: 'https://placehold.co/100x100?text=MS' },
-  { id: 'contact-3', name: 'Pedro Costa', phoneNumber: '+55 31 97777-3333' },
-  { id: 'contact-4', name: 'Ana Pereira', phoneNumber: '+55 41 96666-4444', avatarUrl: 'https://placehold.co/100x100?text=AP' },
+  { 
+    id: 'contact-1', 
+    name: 'João Silva', 
+    phoneNumber: '+55 11 99999-1111', 
+    avatarUrl: 'https://placehold.co/100x100?text=JS',
+    createdAt: new Date('2024-05-20T10:00:00Z'),
+    tags: ['lead-quente', 'produto-x'],
+    internalNote: 'Decisor na Empresa X. Acompanhar de perto.',
+    customFields: { 'ID Externo': 'USR-12345', 'Plano': 'Premium' }
+  },
+  { 
+    id: 'contact-2', 
+    name: 'Maria Souza', 
+    phoneNumber: '+55 21 98888-2222', 
+    avatarUrl: 'https://placehold.co/100x100?text=MS',
+    createdAt: new Date('2024-07-10T15:30:00Z'),
+    tags: ['agendamento'],
+    internalNote: 'Solicitou demonstração para a equipe de marketing.'
+  },
+  { 
+    id: 'contact-3', 
+    name: 'Pedro Costa', 
+    phoneNumber: '+55 31 97777-3333',
+    createdAt: new Date('2023-11-02T11:00:00Z'),
+    tags: ['suporte', 'defeito'],
+    customFields: { 'Nº do Pedido': 'BR-98765' }
+  },
+  { 
+    id: 'contact-4', 
+    name: 'Ana Pereira', 
+    phoneNumber: '+55 41 96666-4444', 
+    avatarUrl: 'https://placehold.co/100x100?text=AP',
+    createdAt: new Date('2024-02-15T09:45:00Z'),
+    tags: ['resolvido'],
+    internalNote: 'Contato antigo. Voltou a ter interesse.'
+  },
 ];
 
 const generateMessages = (agentId: string): Message[] => [
@@ -222,7 +254,6 @@ export const mockConversations: Conversation[] = [
     lastMessage: { id: 'msg-3a', text: 'Qual o valor e as formas de pagamento?', timestamp: new Date(new Date().getTime() - 5 * 60000), sender: 'contact', agentId: mockSimCards[0].id, type: 'message' },
     unreadCount: 1,
     status: 'open',
-    tags: ['lead-quente', 'produto-x']
   },
   {
     id: 'conv-2',
@@ -235,7 +266,6 @@ export const mockConversations: Conversation[] = [
     lastMessage: { id: 'msg-5a', text: 'Olá, Maria! Podemos agendar para amanhã às 15h?', timestamp: new Date(new Date().getTime() - 2 * 24 * 60 * 60000 + 300000), sender: 'agent', agentId: mockSimCards[0].id, type: 'message' },
     unreadCount: 0,
     status: 'open',
-    tags: ['agendamento']
   },
   {
     id: 'conv-3',
@@ -247,7 +277,6 @@ export const mockConversations: Conversation[] = [
     lastMessage: { id: 'msg-6a', text: 'Recebi o produto, mas veio com defeito.', timestamp: new Date(new Date().getTime() - 30 * 60000), sender: 'contact', agentId: mockSimCards[2].id, type: 'message' },
     unreadCount: 2,
     status: 'pending',
-    tags: ['suporte', 'defeito']
   },
     {
     id: 'conv-4',
@@ -260,6 +289,5 @@ export const mockConversations: Conversation[] = [
     lastMessage: { id: 'msg-8a', text: 'Disponha! Qualquer coisa é só chamar.', timestamp: new Date(new Date().getTime() - 5 * 24 * 60 * 60000 + 60000), sender: 'agent', agentId: mockSimCards[4].id, type: 'message' },
     unreadCount: 0,
     status: 'closed',
-    tags: ['resolvido']
   },
 ];

@@ -15,9 +15,9 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 
 
 const getScoreColor = (score: number) => {
-  if (score >= 75) return 'text-green-500';
-  if (score >= 50) return 'text-yellow-500';
-  return 'text-red-500';
+  if (score >= 75) return 'bg-green-500';
+  if (score >= 50) return 'bg-yellow-500';
+  return 'bg-red-500';
 };
 
 interface ConversationListProps {
@@ -58,17 +58,15 @@ export default function ConversationList({
                         <AvatarImage src={conv.contact.avatarUrl} alt={conv.contact.name} data-ai-hint="person avatar" />
                         <AvatarFallback>{conv.contact.name.charAt(0)}</AvatarFallback>
                     </Avatar>
-                     <TooltipProvider>
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <div className={cn("absolute -bottom-1 -right-1 rounded-full p-0.5 bg-card")}>
-                                    <HeartPulse className={cn("h-3.5 w-3.5", scoreColor)} />
-                                </div>
-                            </TooltipTrigger>
-                            <TooltipContent side="right">
-                                <p>Score do Agente: {score}</p>
-                            </TooltipContent>
-                        </Tooltip>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                           <div className={cn("absolute -bottom-1 -right-1 rounded-full h-3.5 w-3.5 border-2 border-card", scoreColor)} />
+                        </TooltipTrigger>
+                        <TooltipContent side="right">
+                            <p>Score do Agente: {score}</p>
+                        </TooltipContent>
+                      </Tooltip>
                     </TooltipProvider>
                 </div>
                 <div className="flex-1 overflow-hidden">
