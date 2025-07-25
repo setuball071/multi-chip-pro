@@ -11,8 +11,8 @@ export default function SimManagementPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-            <h2 className="text-2xl font-headline tracking-tight">Inventário de SIMs</h2>
-            <p className="text-muted-foreground">Gerencie seus cartões SIM registrados aqui.</p>
+            <h2 className="text-2xl font-headline tracking-tight">Inventário de Agentes</h2>
+            <p className="text-muted-foreground">Gerencie seus agentes registrados aqui.</p>
         </div>
         <AddSimDialog />
       </div>

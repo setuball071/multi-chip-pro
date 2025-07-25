@@ -30,7 +30,7 @@ import {
   SidebarInset,
 } from "@/components/ui/sidebar";
 import { Logo } from "@/components/logo";
-import { Bot, History, LayoutDashboard, LogOut, Send, Smartphone } from "lucide-react";
+import { Bot, History, LayoutDashboard, LogOut, Send, User, Users } from "lucide-react";
 
 export default function DashboardLayout({
   children,
@@ -42,7 +42,7 @@ export default function DashboardLayout({
 
   const menuItems = [
     { href: "/dashboard", label: "Painel", icon: LayoutDashboard },
-    { href: "/dashboard/sims", label: "SIMs", icon: Smartphone },
+    { href: "/dashboard/sims", label: "Agentes", icon: Users },
     { href: "/dashboard/warm-up", label: "Aquecimento", icon: Bot },
     { href: "/dashboard/broadcasts", label: "Transmissões", icon: Send },
     { href: "/dashboard/history", label: "Histórico", icon: History },

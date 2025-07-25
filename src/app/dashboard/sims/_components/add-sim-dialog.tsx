@@ -22,8 +22,8 @@ export function AddSimDialog() {
         event.preventDefault();
         // Em um aplicativo real, você lidaria com o envio do formulário aqui
         toast({
-            title: "SIM Registrado",
-            description: "O novo cartão SIM foi adicionado ao seu inventário.",
+            title: "Agente Registrado",
+            description: "O novo agente foi adicionado ao seu inventário.",
         });
         // Aqui você normalmente fecharia o diálogo, o que precisa de gerenciamento de estado.
         // Para este exemplo, apenas mostramos um brinde.
@@ -34,23 +34,23 @@ export function AddSimDialog() {
       <DialogTrigger asChild>
         <Button>
             <PlusCircle className="mr-2 h-4 w-4" />
-            Adicionar SIM
+            Adicionar Agente
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <form onSubmit={handleSubmit}>
             <DialogHeader>
-            <DialogTitle className="font-headline">Registrar Novo SIM</DialogTitle>
+            <DialogTitle className="font-headline">Registrar Novo Agente</DialogTitle>
             <DialogDescription>
-                Adicione um novo cartão SIM ao seu inventário. Clique em salvar quando terminar.
+                Adicione um novo agente ao seu inventário. Clique em salvar quando terminar.
             </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
             <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="name" className="text-right">
-                Nome Interno
+                Nome
                 </Label>
-                <Input id="name" defaultValue="Campanha Charlie" className="col-span-3" />
+                <Input id="name" defaultValue="Agente Charlie" className="col-span-3" />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="phone" className="text-right">
@@ -60,7 +60,7 @@ export function AddSimDialog() {
             </div>
             </div>
             <DialogFooter>
-            <Button type="submit">Salvar SIM</Button>
+            <Button type="submit">Salvar Agente</Button>
             </DialogFooter>
         </form>
       </DialogContent>

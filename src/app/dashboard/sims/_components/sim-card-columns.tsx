@@ -54,7 +54,7 @@ export const columns: ColumnDef<SimCard>[] = [
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Nome Interno
+          Nome do Agente
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )
@@ -131,8 +131,8 @@ export const columns: ColumnDef<SimCard>[] = [
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>Ver Histórico</DropdownMenuItem>
-                <DropdownMenuItem>Editar SIM</DropdownMenuItem>
-                 <DropdownMenuItem className="text-destructive focus:text-destructive focus:bg-destructive/10">Excluir SIM</DropdownMenuItem>
+                <DropdownMenuItem>Editar Agente</DropdownMenuItem>
+                 <DropdownMenuItem className="text-destructive focus:text-destructive focus:bg-destructive/10">Excluir Agente</DropdownMenuItem>
             </DropdownMenuContent>
             </DropdownMenu>
         </div>
