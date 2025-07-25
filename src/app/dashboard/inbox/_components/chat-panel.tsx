@@ -3,13 +3,13 @@
 
 import React, { useState, useEffect } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button, buttonVariants } from '@/components/ui/button';
+import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Conversation, Message } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { Send, Paperclip, MoreVertical, Tags, Pencil, Info, X, PanelRightClose, PanelRightOpen, MessageSquare, Star, HeartPulse, Download, Mail, PlusCircle, Copy, ShieldBan, Search, Bell, Clock } from 'lucide-react';
+import { Send, Paperclip, MoreVertical, Tags, Pencil, Info, X, PanelRightClose, PanelRightOpen, MessageSquare, Star, HeartPulse, Download, Mail, PlusCircle, Copy, ShieldBan, Search, Bell, Clock, Loader2 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
@@ -29,7 +29,9 @@ import { useToast } from "@/hooks/use-toast";
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Input } from '@/components/ui/input';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { buttonVariants } from '@/components/ui/button';
+import { db } from '@/lib/firebase';
+import { collection, addDoc, serverTimestamp, query, orderBy, onSnapshot } from 'firebase/firestore';
 
 
 interface ChatPanelProps {
@@ -37,62 +39,60 @@ interface ChatPanelProps {
 }
 
 const getScoreColor = (score: number) => {
-  if (score >= 75) return 'text-green-500';
-  if (score >= 50) return 'text-yellow-500';
+  if (score > 75) return 'text-green-500';
+  if (score > 49) return 'text-yellow-500';
   return 'text-red-500';
 };
 
 const getScoreBgColor = (score: number) => {
-  if (score >= 75) return 'bg-green-500';
-  if (score >= 50) return 'bg-yellow-500';
+  if (score > 75) return 'bg-green-500';
+  if (score > 49) return 'bg-yellow-500';
   return 'bg-red-500';
 };
 
 export default function ChatPanel({ conversation: initialConversation }: ChatPanelProps) {
   const [conversation, setConversation] = useState(initialConversation);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [loadingMessages, setLoadingMessages] = useState(true);
   const [isContextPanelOpen, setIsContextPanelOpen] = useState(false);
   const [newTag, setNewTag] = useState('');
   const [isClient, setIsClient] = useState(false);
   const [messageText, setMessageText] = useState('');
-  const [activeTab, setActiveTab] = useState("message");
   const { toast } = useToast();
 
   useEffect(() => {
     setIsClient(true);
   }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
     setConversation(initialConversation);
-     if (initialConversation) {
+    if (initialConversation) {
       setIsContextPanelOpen(false);
+
+      // Carregar mensagens do Firestore
+      setLoadingMessages(true);
+      const q = query(collection(db, `conversations/${initialConversation.id}/messages`), orderBy("timestamp", "asc"));
+      const unsubscribe = onSnapshot(q, (snapshot) => {
+        const loadedMessages = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Message));
+        setMessages(loadedMessages);
+        setLoadingMessages(false);
+      });
+      
+      return () => unsubscribe();
     }
   }, [initialConversation]);
 
   const addTag = () => {
     if (newTag && conversation && !conversation.contact.tags.includes(newTag)) {
-       const updatedContact = {
-        ...conversation.contact,
-        tags: [...conversation.contact.tags, newTag]
-      };
-      setConversation({
-        ...conversation,
-        contact: updatedContact,
-      });
+       // Lógica de atualização de tags no Firestore aqui
+      console.log("Adicionando tag:", newTag);
       setNewTag('');
     }
   };
 
   const removeTag = (tagToRemove: string) => {
-    if (conversation) {
-       const updatedContact = {
-        ...conversation.contact,
-        tags: conversation.contact.tags.filter(tag => tag !== tagToRemove)
-      };
-      setConversation({
-        ...conversation,
-        contact: updatedContact
-      });
-    }
+     // Lógica de remoção de tags no Firestore aqui
+     console.log("Removendo tag:", tagToRemove);
   };
 
   const copyToClipboard = () => {
@@ -105,10 +105,8 @@ export default function ChatPanel({ conversation: initialConversation }: ChatPan
       }
   }
 
-  const handleSendMessage = () => {
+  const handleSendMessage = async () => {
     if (messageText.trim() === '' || !conversation) return;
-
-    const messageType = activeTab === 'note' ? 'internal_note' : 'message';
 
     const optimisticMessage: Message = {
       id: `temp_${Date.now()}`,
@@ -116,35 +114,38 @@ export default function ChatPanel({ conversation: initialConversation }: ChatPan
       timestamp: new Date(),
       sender: 'agent',
       agentId: conversation.agent.id,
-      type: messageType,
-      author: messageType === 'internal_note' ? 'Agente de Vendas' : undefined,
+      type: 'message',
       status: 'sending',
     };
 
-    setConversation(prev => {
-        if (!prev) return null;
-        return {
-            ...prev,
-            messages: [...prev.messages, optimisticMessage],
-        };
-    });
+    setMessages(prev => [...prev, optimisticMessage]);
     
+    const textToSend = messageText;
     setMessageText('');
 
-    // Simular chamada de API
-    setTimeout(() => {
-        setConversation(prev => {
-            if (!prev) return null;
-            return {
-                ...prev,
-                messages: prev.messages.map(msg => 
-                    msg.id === optimisticMessage.id 
-                        ? { ...msg, status: 'sent', id: `msg_${Date.now()}` } // Atualiza o status e o ID
-                        : msg
-                ),
-            };
-        });
-    }, 1500); // Atraso de 1.5s para simular a rede
+    try {
+      const messagesCol = collection(db, `conversations/${conversation.id}/messages`);
+      await addDoc(messagesCol, {
+          text: textToSend,
+          sender: 'agent',
+          agentId: conversation.agent.id,
+          type: 'message',
+          timestamp: serverTimestamp()
+      });
+      // O listener onSnapshot cuidará da atualização da UI com a mensagem final.
+    } catch(error) {
+       console.error("Falha ao enviar mensagem:", error);
+       toast({
+           variant: "destructive",
+           title: "Erro",
+           description: "A mensagem não pôde ser enviada.",
+       });
+        setMessages(prev => 
+            prev.map(msg => 
+                msg.id === optimisticMessage.id ? { ...msg, status: 'failed' } : msg
+            )
+        );
+    }
   };
 
 
@@ -169,6 +170,7 @@ export default function ChatPanel({ conversation: initialConversation }: ChatPan
   
   const score = conversation.agent.healthProfile.score;
   const scoreColor = getScoreColor(score);
+  const scoreBgColor = getScoreBgColor(score);
   const contactCreationDate = isClient ? formatDistanceToNow(new Date(conversation.contact.createdAt), { addSuffix: true, locale: ptBR }) : '';
 
 
@@ -187,7 +189,7 @@ export default function ChatPanel({ conversation: initialConversation }: ChatPan
             </Avatar>
             <div className="flex items-center gap-2">
                 <p className="font-semibold text-lg">{conversation.contact.name}</p>
-                <div className={cn("h-2.5 w-2.5 rounded-full", getScoreBgColor(score))}></div>
+                 <div className={cn("h-2.5 w-2.5 rounded-full", scoreBgColor)} title={`Saúde do Agente: ${score}`}></div>
             </div>
           </button>
           <div className="flex items-center gap-1">
@@ -244,55 +246,72 @@ export default function ChatPanel({ conversation: initialConversation }: ChatPan
                       </TooltipTrigger>
                       <TooltipContent>Pesquisar na Conversa</TooltipContent>
                   </Tooltip>
+                   <Tooltip>
+                      <TooltipTrigger asChild>
+                         <Button variant="ghost" size="icon" onClick={() => setIsContextPanelOpen(true)}>
+                            <PanelRightOpen className="h-5 w-5"/>
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>Ver Informações</TooltipContent>
+                  </Tooltip>
               </TooltipProvider>
           </div>
       </header>
       
       <main className="flex-1 bg-muted/20 overflow-y-auto">
           <ScrollArea className="h-full">
-            <div className="p-4 space-y-4">
-            {conversation.messages.map((message) => {
+            <div className="p-4 space-y-1">
+            {loadingMessages && (
+                <div className="flex justify-center items-center h-full">
+                    <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                </div>
+            )}
+            {!loadingMessages && messages.map((message) => {
                 const isAgent = message.sender === 'agent';
+                // A conversão de timestamp do Firestore precisa ser tratada
+                const timestamp = (message.timestamp as any)?.toDate ? (message.timestamp as any).toDate() : new Date(message.timestamp);
+                const localeTimeString = isClient ? timestamp.toLocaleTimeString([], { hour: '2-digit', minute:'2-digit' }) : '';
                 const isInternalNote = message.type === 'internal_note';
-                const localeTimeString = isClient ? new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute:'2-digit' }) : '';
-
+                
                 if (isInternalNote) {
-                    return (
-                        <div key={message.id} className="relative my-4">
-                            <Separator />
-                            <div className="absolute left-1/2 -translate-x-1/2 -top-2.5 bg-muted/20 px-2">
-                                <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                                    <Pencil className="h-3 w-3" />
-                                     <span>Nota de {message.author} • {localeTimeString}</span>
-                                </div>
-                            </div>
-                        </div>
-                    )
-                }
+                     return (
+                         <div key={message.id} className="relative my-4">
+                             <Separator />
+                             <div className="absolute left-1/2 -translate-x-1/2 -top-2.5 bg-muted/20 px-2">
+                                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                     <Pencil className="h-3 w-3" />
+                                      <span>Nota de {message.author} • {localeTimeString}</span>
+                                 </div>
+                             </div>
+                         </div>
+                     )
+                 }
+
 
                 return (
-                     <div key={message.id} className={cn("flex w-full", isAgent ? 'justify-end' : 'justify-start' )}>
-                        <div className='flex items-end gap-2'>
-                          {!isAgent && (
-                              <Avatar className="h-8 w-8 border self-end">
-                                  <AvatarImage src={conversation.contact.avatarUrl} alt={conversation.contact.name} data-ai-hint="person avatar" />
-                                  <AvatarFallback>{conversation.contact.name.charAt(0)}</AvatarFallback>
-                              </Avatar>
-                          )}
-                           {isAgent && message.status === 'sending' && (
-                              <Clock className="h-4 w-4 text-muted-foreground animate-spin" />
-                          )}
-                          <div
-                              className={cn(
-                              'max-w-[75%] rounded-lg p-3 text-sm break-words',
-                              isAgent
-                                      ? 'bg-primary text-primary-foreground'
-                                      : 'bg-card border'
-                              )}
-                          >
-                              <p>{message.text}</p>
-                          </div>
+                     <div key={message.id} className={cn("flex w-full items-end gap-2", isAgent ? 'justify-end' : 'justify-start' )}>
+                        {!isAgent && (
+                            <Avatar className="h-8 w-8 border self-end">
+                                <AvatarImage src={conversation.contact.avatarUrl} alt={conversation.contact.name} data-ai-hint="person avatar" />
+                                <AvatarFallback>{conversation.contact.name.charAt(0)}</AvatarFallback>
+                            </Avatar>
+                        )}
+                        <div
+                            className={cn(
+                            'max-w-[75%] rounded-lg p-2.5 px-3.5 text-sm break-words',
+                            isAgent
+                                    ? 'bg-primary text-primary-foreground'
+                                    : 'bg-card border'
+                            )}
+                        >
+                            <p>{message.text}</p>
                         </div>
+                         {isAgent && message.status === 'sending' && (
+                            <Clock className="h-4 w-4 text-muted-foreground animate-spin" />
+                        )}
+                        {isAgent && message.status === 'failed' && (
+                            <X className="h-4 w-4 text-destructive" />
+                        )}
                     </div>
                 )
             })}
@@ -301,18 +320,10 @@ export default function ChatPanel({ conversation: initialConversation }: ChatPan
       </main>
 
       <footer className="p-4 border-t bg-background shrink-0">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-2">
-            <TabsTrigger value="message">Mensagem</TabsTrigger>
-            <TabsTrigger value="note">Nota Interna</TabsTrigger>
-          </TabsList>
           <div className="relative flex items-end w-full gap-2">
               <Textarea 
-                placeholder={activeTab === 'message' ? "Digite uma mensagem..." : "Digite uma nota interna..."}
-                className={cn(
-                  "pr-20 min-h-0",
-                  activeTab === 'note' && "bg-yellow-500/10 focus:bg-yellow-500/10"
-                )}
+                placeholder={"Digite uma mensagem..."}
+                className={"pr-20 min-h-0"}
                 rows={1}
                 value={messageText}
                 onChange={(e) => setMessageText(e.target.value)}
@@ -323,7 +334,6 @@ export default function ChatPanel({ conversation: initialConversation }: ChatPan
                   <Button size="sm" onClick={handleSendMessage} disabled={!messageText.trim()}><Send className="h-4 w-4 mr-2" /> Enviar</Button>
               </div>
           </div>
-        </Tabs>
       </footer>
 
       <Sheet open={isContextPanelOpen} onOpenChange={setIsContextPanelOpen}>
@@ -362,7 +372,7 @@ export default function ChatPanel({ conversation: initialConversation }: ChatPan
 
                 <Card>
                     <CardHeader>
-                      <CardTitle className="font-medium text-base flex items-center gap-2">
+                      <CardTitle className="text-base flex items-center gap-2">
                         <HeartPulse className="h-5 w-5"/>
                         Saúde do Agente
                       </CardTitle>
@@ -373,7 +383,7 @@ export default function ChatPanel({ conversation: initialConversation }: ChatPan
                                 <span className="text-sm text-muted-foreground">Score de Reputação</span>
                                 <span className={cn("font-bold text-xl", scoreColor)}>{score}</span>
                             </div>
-                            <Progress value={score} className={cn("h-2 [&>*]:bg-green-500", score < 75 && "[&>*]:bg-yellow-500", score < 50 && "[&>*]:bg-red-500")} />
+                            <Progress value={score} className={cn("h-2", scoreBgColor.replace('text-', 'bg-'))} />
                             <div className="flex justify-between items-baseline">
                                 <span className="text-xs text-muted-foreground">Agente: {conversation.agent.internalName}</span>
                                 <span className="text-xs text-muted-foreground capitalize">{conversation.agent.healthProfile.status}</span>
@@ -409,7 +419,7 @@ export default function ChatPanel({ conversation: initialConversation }: ChatPan
                         {conversation.contact.customFields && Object.entries(conversation.contact.customFields).map(([key, value]) => (
                             <div key={key} className="text-sm">
                                 <Label className="font-semibold capitalize">{key}</Label>
-                                <p className="text-muted-foreground">{value}</p>
+                                <p className="text-muted-foreground">{value as string}</p>
                             </div>
                         ))}
                          {!conversation.contact.customFields || Object.keys(conversation.contact.customFields).length === 0 && (

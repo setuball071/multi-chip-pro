@@ -8,15 +8,16 @@ import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Conversation } from '@/lib/types';
 import { cn } from '@/lib/utils';
-import { Search, Users, HeartPulse } from 'lucide-react';
+import { Search, Users, Bot, MessageSquare } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { Skeleton } from '@/components/ui/skeleton';
 
 
 const getScoreBgColor = (score: number) => {
-  if (score >= 75) return 'bg-green-500';
-  if (score >= 50) return 'bg-yellow-500';
+  if (score > 75) return 'bg-green-500';
+  if (score > 49) return 'bg-yellow-500';
   return 'bg-red-500';
 };
 
@@ -24,13 +25,50 @@ interface ConversationListProps {
   conversations: Conversation[];
   selectedConversation: Conversation | null;
   onSelectConversation: (conversation: Conversation) => void;
+  loading: boolean;
 }
 
 export default function ConversationList({
   conversations,
   selectedConversation,
   onSelectConversation,
+  loading
 }: ConversationListProps) {
+
+   if (loading) {
+    return (
+      <div className="flex flex-col h-full bg-card border-r p-4 space-y-4">
+        <div className="flex items-center gap-2">
+            <Skeleton className="h-8 w-8" />
+            <Skeleton className="h-6 w-32" />
+        </div>
+        <Skeleton className="h-10 w-full" />
+        {Array.from({ length: 10 }).map((_, i) => (
+           <div key={i} className="flex items-center space-x-4">
+            <Skeleton className="h-12 w-12 rounded-full" />
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-[150px]" />
+              <Skeleton className="h-4 w-[100px]" />
+            </div>
+          </div>
+        ))}
+      </div>
+    )
+  }
+
+  if (conversations.length === 0) {
+      return (
+         <div className="flex flex-col h-full bg-card border-r p-4">
+            <div className="text-center text-muted-foreground flex-1 flex flex-col justify-center items-center">
+                <MessageSquare className="h-10 w-10 mb-4" />
+                <h3 className="font-semibold text-lg">Nenhuma Conversa</h3>
+                <p className="text-sm">Não há conversas ativas na sua caixa de entrada.</p>
+            </div>
+        </div>
+      )
+  }
+
+
   return (
     <div className="flex flex-col h-full bg-card border-r">
       <div className="p-4 border-b">
@@ -73,11 +111,11 @@ export default function ConversationList({
                   <div className="flex items-center justify-between">
                     <p className="font-semibold truncate">{conv.contact.name}</p>
                     <p className="text-xs text-muted-foreground shrink-0">
-                        {formatDistanceToNow(conv.lastMessage.timestamp, { addSuffix: true, locale: ptBR })}
+                        {conv.lastMessage?.timestamp ? formatDistanceToNow(new Date(conv.lastMessage.timestamp), { addSuffix: true, locale: ptBR }) : ''}
                     </p>
                   </div>
                   <p className="text-sm text-muted-foreground truncate">
-                    {conv.lastMessage.sender === 'agent' ? 'Você: ' : ''}{conv.lastMessage.text}
+                    {conv.lastMessage?.sender === 'agent' ? 'Você: ' : ''}{conv.lastMessage?.text}
                   </p>
                    <div className="flex items-center gap-2 mt-1.5">
                     <Badge variant="outline" className="text-xs">{conv.agent.internalName}</Badge>

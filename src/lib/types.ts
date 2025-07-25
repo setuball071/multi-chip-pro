@@ -1,3 +1,5 @@
+import { Timestamp } from "firebase/firestore";
+
 export type HealthProfile = {
   score: number;
   total_sent_today: number;
@@ -7,8 +9,8 @@ export type HealthProfile = {
   session_start_count: number;
   status: 'warming' | 'active' | 'risky' | 'cooldown' | 'banned';
   strategy: 'none' | 'slow' | 'moderate' | 'aggressive';
-  last_calculation: Date;
-  last_human_like_action: Date;
+  last_calculation: Date | Timestamp;
+  last_human_like_action: Date | Timestamp;
 };
 
 export type SimCard = {
@@ -18,7 +20,7 @@ export type SimCard = {
   status: 'active' | 'blocked' | 'warming up';
   tags: string[];
   messageCount: number;
-  createdAt: Date;
+  createdAt: Date | Timestamp;
   healthProfile: HealthProfile;
 };
 
@@ -27,7 +29,7 @@ export type HistoryEntry = {
   simId: string;
   simName: string;
   type: 'warm-up' | 'broadcast';
-  date: Date;
+  date: Date | Timestamp;
   details: string;
   tags: string[];
 };
@@ -37,10 +39,10 @@ export type Contact = {
   name: string;
   phoneNumber: string;
   avatarUrl?: string;
-  createdAt: Date;
+  createdAt: Date | Timestamp;
   tags: string[];
   internalNote?: string;
-  customFields?: Record<string, string>;
+  customFields?: Record<string, unknown>;
   isBlocked?: boolean;
   assignedTo?: string; // agentId
 };
@@ -48,7 +50,7 @@ export type Contact = {
 export type Message = {
   id: string;
   text: string;
-  timestamp: Date;
+  timestamp: Date | Timestamp;
   sender: 'contact' | 'agent' | 'system';
   agentId: string;
   type: 'message' | 'internal_note';
