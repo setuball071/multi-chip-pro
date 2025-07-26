@@ -1,3 +1,4 @@
+
 "use client"
 
 import * as React from "react"
@@ -5,6 +6,7 @@ import {
   ColumnDef,
   SortingState,
   ColumnFiltersState,
+  VisibilityState,
   flexRender,
   getCoreRowModel,
   getPaginationRowModel,
@@ -36,13 +38,14 @@ interface DataTableProps<TData, TValue> {
   data: TData[]
 }
 
-export function SimCardDataTable<TData, TValue>({
+export function ChannelDataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [rowSelection, setRowSelection] = React.useState({})
+  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   
   const table = useReactTable({
     data,
@@ -54,10 +57,12 @@ export function SimCardDataTable<TData, TValue>({
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
     onRowSelectionChange: setRowSelection,
+    onColumnVisibilityChange: setColumnVisibility,
     state: {
       sorting,
       columnFilters,
       rowSelection,
+      columnVisibility,
     },
   })
 
@@ -83,6 +88,13 @@ export function SimCardDataTable<TData, TValue>({
               .getAllColumns()
               .filter((column) => column.getCanHide())
               .map((column) => {
+                 const columnIdMap: { [key: string]: string } = {
+                    internalName: 'Nome do Canal',
+                    phoneNumber: 'Número de Telefone',
+                    status: 'Status',
+                    messageCount: 'Mensagens',
+                    createdAt: 'Data de Adição',
+                 };
                 return (
                   <DropdownMenuCheckboxItem
                     key={column.id}
@@ -92,12 +104,7 @@ export function SimCardDataTable<TData, TValue>({
                       column.toggleVisibility(!!value)
                     }
                   >
-                    {column.id === 'internalName' ? 'Nome Interno' :
-                     column.id === 'phoneNumber' ? 'Número de Telefone' :
-                     column.id === 'status' ? 'Status' :
-                     column.id === 'messageCount' ? 'Mensagens' :
-                     column.id === 'createdAt' ? 'Data de Adição' :
-                     column.id}
+                   {columnIdMap[column.id] || column.id}
                   </DropdownMenuCheckboxItem>
                 )
               })}
@@ -140,7 +147,7 @@ export function SimCardDataTable<TData, TValue>({
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length} className="h-24 text-center">
-                Nenhum resultado.
+                Nenhum canal encontrado.
               </TableCell>
             </TableRow>
           )}

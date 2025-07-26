@@ -1,3 +1,4 @@
+
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
@@ -13,15 +14,19 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Badge } from "@/components/ui/badge"
-import { SimCard } from "@/lib/types"
+import { SimCard } from "@/lib/types" // Reutilizando o tipo, pois a estrutura é similar
 import { Checkbox } from "@/components/ui/checkbox"
+import { cn } from "@/lib/utils"
 
 
-const statusTranslations: {[key: string]: string} = {
-  active: "Ativo",
-  "warming up": "Aquecendo",
-  blocked: "Bloqueado",
+const statusConfig: {[key: string]: { text: string; className: string }} = {
+  CONNECTED: { text: "Conectado", className: "bg-green-500 text-white" },
+  AWAITING_QR_SCAN: { text: "Aguardando QR", className: "bg-yellow-500 text-black" },
+  PENDING_INSTANCE_START: { text: "Iniciando", className: "bg-blue-500 text-white" },
+  blocked: { text: "Bloqueado", className: "bg-red-700 text-white" },
+  default: { text: "Desconhecido", className: "bg-gray-400 text-white" },
 }
+
 
 export const columns: ColumnDef<SimCard>[] = [
   {
@@ -54,7 +59,7 @@ export const columns: ColumnDef<SimCard>[] = [
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Nome do Agente
+          Nome do Canal
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )
@@ -69,14 +74,12 @@ export const columns: ColumnDef<SimCard>[] = [
     header: "Status",
     cell: ({ row }) => {
       const status = row.getValue("status") as string;
+      const config = statusConfig[status] || statusConfig.default;
       return (
         <Badge
-          variant={
-            status === "active" ? "default" : status === "warming up" ? "secondary" : "destructive"
-          }
-          className="capitalize"
+          className={cn("capitalize border-transparent", config.className)}
         >
-          {statusTranslations[status]}
+          {config.text}
         </Badge>
       );
     },
@@ -103,15 +106,15 @@ export const columns: ColumnDef<SimCard>[] = [
   {
     accessorKey: "createdAt",
     header: "Data de Adição",
-    cell: ({ row }) => {
-      const date = new Date(row.getValue("createdAt"));
+     cell: ({ row }) => {
+      const date = row.getValue("createdAt") as Date;
       return <span>{date.toLocaleDateString()}</span>;
     },
   },
   {
     id: "actions",
     cell: ({ row }) => {
-      const sim = row.original
+      const channel = row.original
 
       return (
         <div className="text-right">
@@ -125,14 +128,14 @@ export const columns: ColumnDef<SimCard>[] = [
             <DropdownMenuContent align="end">
                 <DropdownMenuLabel>Ações</DropdownMenuLabel>
                 <DropdownMenuItem
-                onClick={() => navigator.clipboard.writeText(sim.phoneNumber)}
+                    onClick={() => navigator.clipboard.writeText(channel.phoneNumber)}
+                    disabled={!channel.phoneNumber || channel.phoneNumber === 'N/A'}
                 >
-                Copiar Número de Telefone
+                Copiar Número
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>Ver Histórico</DropdownMenuItem>
-                <DropdownMenuItem>Editar Agente</DropdownMenuItem>
-                 <DropdownMenuItem className="text-destructive focus:text-destructive focus:bg-destructive/10">Excluir Agente</DropdownMenuItem>
+                <DropdownMenuItem>Ver Detalhes</DropdownMenuItem>
+                <DropdownMenuItem className="text-destructive focus:text-destructive focus:bg-destructive/10">Excluir Canal</DropdownMenuItem>
             </DropdownMenuContent>
             </DropdownMenu>
         </div>

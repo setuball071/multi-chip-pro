@@ -7,21 +7,24 @@ export type HealthProfile = {
   total_replies_to_our_messages: number;
   total_blocks_reported: number;
   session_start_count: number;
-  status: 'warming' | 'active' | 'risky' | 'cooldown' | 'banned';
+  status: 'warming' | 'active' | 'risky' | 'cooldown' | 'banned' | 'unknown';
   strategy: 'none' | 'slow' | 'moderate' | 'aggressive';
   last_calculation: Date | Timestamp;
   last_human_like_action: Date | Timestamp;
 };
 
+// Este tipo é usado tanto para Canais (connections) quanto para a estrutura legada de SIMs.
+// Adapte conforme necessário.
 export type SimCard = {
   id: string;
-  internalName: string;
+  internalName: string; // Vem de channelName no Firestore
   phoneNumber: string;
-  status: 'active' | 'blocked' | 'warming up';
+  status: 'active' | 'blocked' | 'warming up' | 'CONNECTED' | 'AWAITING_QR_SCAN' | 'PENDING_INSTANCE_START';
   tags: string[];
   messageCount: number;
   createdAt: Date | Timestamp;
   healthProfile: HealthProfile;
+  qr_string?: string;
 };
 
 export type HistoryEntry = {
