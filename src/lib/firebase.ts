@@ -1,4 +1,4 @@
-import { initializeApp, getApps, getApp } from "firebase/app";
+import { initializeApp, getApp, getApps, FirebaseApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
@@ -11,10 +11,14 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
-// Inicializa o Firebase (garantindo que não seja inicializado mais de uma vez)
-const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+// Singleton pattern to ensure only one app instance is created
+let app: FirebaseApp;
+if (!getApps().length) {
+  app = initializeApp(firebaseConfig);
+} else {
+  app = getApp();
+}
 
-// Exporta os serviços que você vai usar no seu app
 const db = getFirestore(app);
 const auth = getAuth(app);
 
