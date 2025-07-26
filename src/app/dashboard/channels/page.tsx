@@ -9,12 +9,19 @@ import { columns } from './_components/channel-columns';
 import { ChannelDataTable } from './_components/channel-data-table';
 import { AddChannelDialog } from './_components/add-channel-dialog';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useAuth } from 'reactfire';
 
 export default function ChannelManagementPage() {
   const [channels, setChannels] = useState<SimCard[]>([]);
   const [loading, setLoading] = useState(true);
+  const { data: user } = useAuth();
+
 
   useEffect(() => {
+    if (!user) {
+        setLoading(false);
+        return;
+    };
     // Em um app real, você filtraria por workspaceId, etc.
     const q = query(collection(db, "connections"), orderBy("createdAt", "desc"));
 
@@ -42,7 +49,7 @@ export default function ChannelManagementPage() {
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [user]);
 
   return (
     <div className="space-y-6">
