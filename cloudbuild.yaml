@@ -1,0 +1,15 @@
+steps:
+# Este é o único passo do nosso build: construir a imagem Docker.
+- name: 'gcr.io/cloud-builders/docker'
+  args:
+    # 1º argumento: o comando 'build'
+    - 'build'
+    # 2º argumento: '-t' para dar um nome (tag) à imagem
+    - 'gcr.io/$PROJECT_ID/multi-chip-pro:latest'
+    # 3º argumento: O mais importante. O diretório de contexto do build.
+    # O Docker vai entrar nesta pasta para encontrar o Dockerfile e construir.
+    - './baileys-worker'
+
+# Define qual imagem será enviada para o Artifact Registry no final.
+images:
+  - 'gcr.io/$PROJECT_ID/multi-chip-pro:latest'
