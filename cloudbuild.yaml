@@ -1,14 +1,13 @@
 steps:
-# Passo único: construir a imagem Docker.
 - name: 'gcr.io/cloud-builders/docker'
+  # Este comando é a chave: diz ao Google para entrar na pasta 'worker' ANTES de fazer o build.
+  dir: 'worker'
   args:
     - 'build'
     - '-t'
     - 'gcr.io/$PROJECT_ID/multi-chip-pro:latest'
-    # O ponto '.' significa: "Use esta pasta raiz como o contexto.
-    # O Dockerfile está aqui."
+    # O ponto '.' agora se refere à pasta 'worker'
     - '.'
 
-# Define a imagem final a ser salva.
 images:
   - 'gcr.io/$PROJECT_ID/multi-chip-pro:latest'
